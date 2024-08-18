@@ -1,0 +1,1 @@
+export const MINIMUM_STRING_SIMILARITY_SCORE = 0.5

@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+  output = "../lib/generated/client"
+  previewFeatures = ["driverAdapters"]
+}
+
+generator zod {
+  provider       = "zod-prisma-types"
+  output = "../lib/generated/zod"
+  useTypeAssertions = true
+  createRelationValuesTypes = true
+  useMultipleFiles          = true
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AccessControl {
+  PUBLIC
+  PRIVATE
+}
+
+model SavedCompanion {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt          DateTime @default(now()) @db.Timestamp(6)
+  owner              String?  @db.Uuid
+  anonymousOwner     String?
+  savedInputs        Json?
+  accessControl      AccessControl   @default(PUBLIC)
+  savedConfiguration Json?
+  name               String?  @db.Text
+  description        String?  @db.Text
+  updatedAt          DateTime @default(now()) @db.Timestamp(6)
+  shortId            String   @unique @db.Text
+  user              User?    @relation(fields: [owner], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  anonymousUser     AnonymousUser? @relation(fields: [anonymousOwner], references: [id], onUpdate: Cascade, onDelete: SetNull)
+
+  @@unique([id, shortId])
+}
+
+model User {
+  id               String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt        DateTime?        @db.Timestamp(6)
+  clerkId          String?          @unique @db.Text
+  lastUpdated      DateTime         @default(now()) @db.Timestamp(6)
+  emailAddresses   Json?
+  lastSignInAt     DateTime?        @db.Timestamp(6)
+  username         String           @unique @db.Text
+  firstName        String?          @db.Text
+  lastName         String?          @db.Text
+  externalAccounts Json?
+  SavedCompanion   SavedCompanion[]
+}
+
+model AnonymousUser {
+  id       String    @id
+  sessions AnonymousSession[]
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  expiresAt DateTime?
+  SavedCompanion   SavedCompanion[]
+}
+
+model AnonymousSession {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+
+  anonymousUser     AnonymousUser @relation(references: [id], fields: [userId], onDelete: Cascade)
+}

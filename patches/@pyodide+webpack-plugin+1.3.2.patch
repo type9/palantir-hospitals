@@ -1,0 +1,13 @@
+diff --git a/node_modules/@pyodide/webpack-plugin/plugin.mjs b/node_modules/@pyodide/webpack-plugin/plugin.mjs
+index 1aac011..d7a0ccd 100644
+--- a/node_modules/@pyodide/webpack-plugin/plugin.mjs
++++ b/node_modules/@pyodide/webpack-plugin/plugin.mjs
+@@ -311,7 +302,7 @@ class PyodidePlugin extends copy_webpack_plugin__WEBPACK_IMPORTED_MODULE_4__["de
+     apply(compiler) {
+         super.apply(compiler);
+         compiler.hooks.compilation.tap(this.constructor.name, (compilation) => {
+-            const compilationHooks = webpack__WEBPACK_IMPORTED_MODULE_5__["default"].NormalModule.getCompilationHooks(compilation);
++            const compilationHooks = compiler.webpack.NormalModule.getCompilationHooks(compilation);
+             compilationHooks.beforeLoaders.tap(this.constructor.name, (loaders, normalModule) => {
+                 const matches = normalModule.userRequest.match(/pyodide\.m?js$/);
+                 if (matches) {

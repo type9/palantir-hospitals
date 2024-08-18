@@ -1,0 +1,7 @@
+{
+	"env": {
+		"BRANCH": "test"
+	},
+	"buildCommand": "cd ../.. && pnpm build --filter=webhook-server",
+	"outputDirectory": ".next"
+}

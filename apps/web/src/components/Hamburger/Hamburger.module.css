@@ -1,0 +1,30 @@
+.line {
+	width: 100%;
+	height: 7%;
+	background-color: var(--color-background-secondary);
+	display: block;
+	margin: 8px auto;
+	transition: all 0.3s ease-in-out;
+}
+.line:first-child {
+	margin-top: 3%;
+}
+.line:last-child {
+	margin-bottom: 0;
+}
+
+.hamburger {
+	cursor: pointer;
+}
+
+.hamburgerActive .line:nth-child(2) {
+	opacity: 0;
+}
+
+.hamburgerActive .line:nth-child(1) {
+	transform: translateY(9.75px) rotate(45deg);
+}
+
+.hamburgerActive .line:nth-child(3) {
+	transform: translateY(-9.75px) rotate(-45deg);
+}

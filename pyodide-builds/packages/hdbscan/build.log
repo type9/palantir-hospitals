@@ -1,0 +1,221 @@
+Running source pyodide_env in /src/packages/hdbscan                                                                       
+* Creating virtualenv isolated environment...
+* Installing packages in isolated environment... (cython<3, setuptools, wheel)
+* Getting build dependencies for wheel...
+running egg_info
+writing hdbscan.egg-info/PKG-INFO
+writing dependency_links to hdbscan.egg-info/dependency_links.txt
+writing requirements to hdbscan.egg-info/requires.txt
+writing top-level names to hdbscan.egg-info/top_level.txt
+reading manifest file 'hdbscan.egg-info/SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+warning: no files found matching '*.c' under directory 'hdbscan'
+adding license file 'LICENSE'
+writing manifest file 'hdbscan.egg-info/SOURCES.txt'
+* Installing packages in isolated environment... (wheel)
+* Building wheel...
+running bdist_wheel
+running build
+running build_py
+creating build
+creating build/lib.emscripten_3_1_52_wasm32-cpython-312
+creating build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan
+copying hdbscan/validity.py -> build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan
+copying hdbscan/flat.py -> build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan
+copying hdbscan/__init__.py -> build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan
+copying hdbscan/prediction.py -> build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan
+copying hdbscan/plots.py -> build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan
+copying hdbscan/hdbscan_.py -> build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan
+copying hdbscan/robust_single_linkage_.py -> build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan
+creating build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/tests
+copying hdbscan/tests/test_flat.py -> build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/tests
+copying hdbscan/tests/test_prediction_utils.py -> build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/tests
+copying hdbscan/tests/__init__.py -> build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/tests
+copying hdbscan/tests/test_rsl.py -> build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/tests
+copying hdbscan/tests/test_hdbscan.py -> build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/tests
+running build_ext
+cythoning hdbscan/_hdbscan_tree.pyx to hdbscan/_hdbscan_tree.c
+/tmp/build-env-nmnf32iv/lib/python3.12/site-packages/Cython/Compiler/Main.py:369: FutureWarning: Cython directive 'language_level' not set, using 2 for now (Py2). This will change in a later release! File: /src/packages/hdbscan/build/hdbscan-0.8.33/hdbscan/_hdbscan_tree.pyx
+  tree = Parsing.p_module(s, pxd, full_module_name)
+cythoning hdbscan/_hdbscan_linkage.pyx to hdbscan/_hdbscan_linkage.c
+/tmp/build-env-nmnf32iv/lib/python3.12/site-packages/Cython/Compiler/Main.py:369: FutureWarning: Cython directive 'language_level' not set, using 2 for now (Py2). This will change in a later release! File: /src/packages/hdbscan/build/hdbscan-0.8.33/hdbscan/_hdbscan_linkage.pyx
+  tree = Parsing.p_module(s, pxd, full_module_name)
+cythoning hdbscan/_hdbscan_boruvka.pyx to hdbscan/_hdbscan_boruvka.c
+/tmp/build-env-nmnf32iv/lib/python3.12/site-packages/Cython/Compiler/Main.py:369: FutureWarning: Cython directive 'language_level' not set, using 2 for now (Py2). This will change in a later release! File: /src/packages/hdbscan/build/hdbscan-0.8.33/hdbscan/_hdbscan_boruvka.pyx
+  tree = Parsing.p_module(s, pxd, full_module_name)
+cythoning hdbscan/_hdbscan_reachability.pyx to hdbscan/_hdbscan_reachability.c
+/tmp/build-env-nmnf32iv/lib/python3.12/site-packages/Cython/Compiler/Main.py:369: FutureWarning: Cython directive 'language_level' not set, using 2 for now (Py2). This will change in a later release! File: /src/packages/hdbscan/build/hdbscan-0.8.33/hdbscan/_hdbscan_reachability.pyx
+  tree = Parsing.p_module(s, pxd, full_module_name)
+cythoning hdbscan/_prediction_utils.pyx to hdbscan/_prediction_utils.c
+/tmp/build-env-nmnf32iv/lib/python3.12/site-packages/Cython/Compiler/Main.py:369: FutureWarning: Cython directive 'language_level' not set, using 2 for now (Py2). This will change in a later release! File: /src/packages/hdbscan/build/hdbscan-0.8.33/hdbscan/_prediction_utils.pyx
+  tree = Parsing.p_module(s, pxd, full_module_name)
+cythoning hdbscan/dist_metrics.pyx to hdbscan/dist_metrics.c
+/tmp/build-env-nmnf32iv/lib/python3.12/site-packages/Cython/Compiler/Main.py:369: FutureWarning: Cython directive 'language_level' not set, using 2 for now (Py2). This will change in a later release! File: /src/packages/hdbscan/build/hdbscan-0.8.33/hdbscan/dist_metrics.pxd
+  tree = Parsing.p_module(s, pxd, full_module_name)
+building 'hdbscan._hdbscan_tree' extension
+creating build/temp.emscripten_3_1_52_wasm32-cpython-312
+creating build/temp.emscripten_3_1_52_wasm32-cpython-312/hdbscan
+/tmp/tmp9fiuqjku/cc -fno-strict-overflow -DNDEBUG -g -O3 -Wall -O2 -g0 -fPIC -DPY_CALL_TRAMPOLINE -I/tmp/build-env-nmnf32iv/include -I/src/cpython/installs/python-3.12.1/include/python3.12 -I/tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include -c hdbscan/_hdbscan_tree.c -o build/temp.emscripten_3_1_52_wasm32-cpython-312/hdbscan/_hdbscan_tree.o
+In file included from hdbscan/_hdbscan_tree.c:752:
+In file included from /tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/arrayobject.h:5:
+In file included from /tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/ndarrayobject.h:12:
+In file included from /tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/ndarraytypes.h:1929:
+/tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/npy_1_7_deprecated_api.h:17:2: warning: "Using deprecated NumPy API, disable it with "          "#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION" [-W#warnings]
+   17 | #warning "Using deprecated NumPy API, disable it with " \
+      |  ^
+1 warning generated.
+/tmp/tmp9fiuqjku/cc build/temp.emscripten_3_1_52_wasm32-cpython-312/hdbscan/_hdbscan_tree.o -o build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/_hdbscan_tree.cpython-312-wasm32-emscripten.so
+building 'hdbscan._hdbscan_linkage' extension
+/tmp/tmp9fiuqjku/cc -fno-strict-overflow -DNDEBUG -g -O3 -Wall -O2 -g0 -fPIC -DPY_CALL_TRAMPOLINE -I/tmp/build-env-nmnf32iv/include -I/src/cpython/installs/python-3.12.1/include/python3.12 -I/tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include -c hdbscan/_hdbscan_linkage.c -o build/temp.emscripten_3_1_52_wasm32-cpython-312/hdbscan/_hdbscan_linkage.o
+In file included from hdbscan/_hdbscan_linkage.c:752:
+In file included from /tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/arrayobject.h:5:
+In file included from /tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/ndarrayobject.h:12:
+In file included from /tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/ndarraytypes.h:1929:
+/tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/npy_1_7_deprecated_api.h:17:2: warning: "Using deprecated NumPy API, disable it with "          "#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION" [-W#warnings]
+   17 | #warning "Using deprecated NumPy API, disable it with " \
+      |  ^
+1 warning generated.
+/tmp/tmp9fiuqjku/cc build/temp.emscripten_3_1_52_wasm32-cpython-312/hdbscan/_hdbscan_linkage.o -o build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/_hdbscan_linkage.cpython-312-wasm32-emscripten.so
+building 'hdbscan._hdbscan_boruvka' extension
+/tmp/tmp9fiuqjku/cc -fno-strict-overflow -DNDEBUG -g -O3 -Wall -O2 -g0 -fPIC -DPY_CALL_TRAMPOLINE -I/tmp/build-env-nmnf32iv/include -I/src/cpython/installs/python-3.12.1/include/python3.12 -I/tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include -c hdbscan/_hdbscan_boruvka.c -o build/temp.emscripten_3_1_52_wasm32-cpython-312/hdbscan/_hdbscan_boruvka.o
+In file included from hdbscan/_hdbscan_boruvka.c:752:
+In file included from /tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/arrayobject.h:5:
+In file included from /tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/ndarrayobject.h:12:
+In file included from /tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/ndarraytypes.h:1929:
+/tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/npy_1_7_deprecated_api.h:17:2: warning: "Using deprecated NumPy API, disable it with "          "#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION" [-W#warnings]
+   17 | #warning "Using deprecated NumPy API, disable it with " \
+      |  ^
+1 warning generated.
+/tmp/tmp9fiuqjku/cc build/temp.emscripten_3_1_52_wasm32-cpython-312/hdbscan/_hdbscan_boruvka.o -o build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/_hdbscan_boruvka.cpython-312-wasm32-emscripten.so
+building 'hdbscan._hdbscan_reachability' extension
+/tmp/tmp9fiuqjku/cc -fno-strict-overflow -DNDEBUG -g -O3 -Wall -O2 -g0 -fPIC -DPY_CALL_TRAMPOLINE -I/tmp/build-env-nmnf32iv/include -I/src/cpython/installs/python-3.12.1/include/python3.12 -I/tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include -c hdbscan/_hdbscan_reachability.c -o build/temp.emscripten_3_1_52_wasm32-cpython-312/hdbscan/_hdbscan_reachability.o
+In file included from hdbscan/_hdbscan_reachability.c:752:
+In file included from /tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/arrayobject.h:5:
+In file included from /tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/ndarrayobject.h:12:
+In file included from /tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/ndarraytypes.h:1929:
+/tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/npy_1_7_deprecated_api.h:17:2: warning: "Using deprecated NumPy API, disable it with "          "#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION" [-W#warnings]
+   17 | #warning "Using deprecated NumPy API, disable it with " \
+      |  ^
+1 warning generated.
+/tmp/tmp9fiuqjku/cc build/temp.emscripten_3_1_52_wasm32-cpython-312/hdbscan/_hdbscan_reachability.o -o build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/_hdbscan_reachability.cpython-312-wasm32-emscripten.so
+building 'hdbscan._prediction_utils' extension
+/tmp/tmp9fiuqjku/cc -fno-strict-overflow -DNDEBUG -g -O3 -Wall -O2 -g0 -fPIC -DPY_CALL_TRAMPOLINE -I/tmp/build-env-nmnf32iv/include -I/src/cpython/installs/python-3.12.1/include/python3.12 -I/tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include -c hdbscan/_prediction_utils.c -o build/temp.emscripten_3_1_52_wasm32-cpython-312/hdbscan/_prediction_utils.o
+In file included from hdbscan/_prediction_utils.c:752:
+In file included from /tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/arrayobject.h:5:
+In file included from /tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/ndarrayobject.h:12:
+In file included from /tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/ndarraytypes.h:1929:
+/tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/npy_1_7_deprecated_api.h:17:2: warning: "Using deprecated NumPy API, disable it with "          "#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION" [-W#warnings]
+   17 | #warning "Using deprecated NumPy API, disable it with " \
+      |  ^
+1 warning generated.
+/tmp/tmp9fiuqjku/cc build/temp.emscripten_3_1_52_wasm32-cpython-312/hdbscan/_prediction_utils.o -o build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/_prediction_utils.cpython-312-wasm32-emscripten.so
+building 'hdbscan.dist_metrics' extension
+/tmp/tmp9fiuqjku/cc -fno-strict-overflow -DNDEBUG -g -O3 -Wall -O2 -g0 -fPIC -DPY_CALL_TRAMPOLINE -I/tmp/build-env-nmnf32iv/include -I/src/cpython/installs/python-3.12.1/include/python3.12 -I/tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include -c hdbscan/dist_metrics.c -o build/temp.emscripten_3_1_52_wasm32-cpython-312/hdbscan/dist_metrics.o
+In file included from hdbscan/dist_metrics.c:752:
+In file included from /tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/arrayobject.h:5:
+In file included from /tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/ndarrayobject.h:12:
+In file included from /tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/ndarraytypes.h:1929:
+/tmp/build-env-nmnf32iv/lib/python3.12/site-packages/numpy/core/include/numpy/npy_1_7_deprecated_api.h:17:2: warning: "Using deprecated NumPy API, disable it with "          "#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION" [-W#warnings]
+   17 | #warning "Using deprecated NumPy API, disable it with " \
+      |  ^
+hdbscan/dist_metrics.c:7333:74: warning: incompatible pointer types passing 'struct __pyx_obj_7hdbscan_12dist_metrics_DistanceMetric *' to parameter of type 'struct __pyx_obj_7hdbscan_12dist_metrics_SEuclideanDistance *' [-Wincompatible-pointer-types]
+ 7333 |   __pyx_t_1 = __pyx_f_7hdbscan_12dist_metrics_18SEuclideanDistance_rdist(((struct __pyx_obj_7hdbscan_12dist_metrics_DistanceMetric *)__pyx_v_self), __pyx_v_x1, __pyx_v_x2, __pyx_v_size); if (unlikely(__pyx_t_1 == ((__pyx_t_7hdbscan_12dist_metrics_DTYPE_t)-1.0))) __PYX_ERR(1, 474, __pyx_L1_error)
+      |                                                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+hdbscan/dist_metrics.c:7130:168: note: passing argument to parameter '__pyx_v_self' here
+ 7130 | static __pyx_t_7hdbscan_12dist_metrics_DTYPE_t __pyx_f_7hdbscan_12dist_metrics_18SEuclideanDistance_rdist(struct __pyx_obj_7hdbscan_12dist_metrics_SEuclideanDistance *__pyx_v_self, __pyx_t_7hdbscan_12dist_metrics_DTYPE_t *__pyx_v_x1, __pyx_t_7hdbscan_12dist_metrics_DTYPE_t *__pyx_v_x2, __pyx_t_7hdbscan_12dist_metrics_ITYPE_t __pyx_v_size) {
+      |                                                                                                                                                                        ^
+hdbscan/dist_metrics.c:8109:73: warning: incompatible pointer types passing 'struct __pyx_obj_7hdbscan_12dist_metrics_DistanceMetric *' to parameter of type 'struct __pyx_obj_7hdbscan_12dist_metrics_MinkowskiDistance *' [-Wincompatible-pointer-types]
+ 8109 |   __pyx_t_1 = __pyx_f_7hdbscan_12dist_metrics_17MinkowskiDistance_rdist(((struct __pyx_obj_7hdbscan_12dist_metrics_DistanceMetric *)__pyx_v_self), __pyx_v_x1, __pyx_v_x2, __pyx_v_size); if (unlikely(__pyx_t_1 == ((__pyx_t_7hdbscan_12dist_metrics_DTYPE_t)-1.0))) __PYX_ERR(1, 563, __pyx_L1_error)
+      |                                                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+hdbscan/dist_metrics.c:8025:166: note: passing argument to parameter '__pyx_v_self' here
+ 8025 | static __pyx_t_7hdbscan_12dist_metrics_DTYPE_t __pyx_f_7hdbscan_12dist_metrics_17MinkowskiDistance_rdist(struct __pyx_obj_7hdbscan_12dist_metrics_MinkowskiDistance *__pyx_v_self, __pyx_t_7hdbscan_12dist_metrics_DTYPE_t *__pyx_v_x1, __pyx_t_7hdbscan_12dist_metrics_DTYPE_t *__pyx_v_x2, __pyx_t_7hdbscan_12dist_metrics_ITYPE_t __pyx_v_size) {
+      |                                                                                                                                                                      ^
+hdbscan/dist_metrics.c:8807:74: warning: incompatible pointer types passing 'struct __pyx_obj_7hdbscan_12dist_metrics_DistanceMetric *' to parameter of type 'struct __pyx_obj_7hdbscan_12dist_metrics_WMinkowskiDistance *' [-Wincompatible-pointer-types]
+ 8807 |   __pyx_t_1 = __pyx_f_7hdbscan_12dist_metrics_18WMinkowskiDistance_rdist(((struct __pyx_obj_7hdbscan_12dist_metrics_DistanceMetric *)__pyx_v_self), __pyx_v_x1, __pyx_v_x2, __pyx_v_size); if (unlikely(__pyx_t_1 == ((__pyx_t_7hdbscan_12dist_metrics_DTYPE_t)-1.0))) __PYX_ERR(1, 622, __pyx_L1_error)
+      |                                                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+hdbscan/dist_metrics.c:8614:168: note: passing argument to parameter '__pyx_v_self' here
+ 8614 | static __pyx_t_7hdbscan_12dist_metrics_DTYPE_t __pyx_f_7hdbscan_12dist_metrics_18WMinkowskiDistance_rdist(struct __pyx_obj_7hdbscan_12dist_metrics_WMinkowskiDistance *__pyx_v_self, __pyx_t_7hdbscan_12dist_metrics_DTYPE_t *__pyx_v_x1, __pyx_t_7hdbscan_12dist_metrics_DTYPE_t *__pyx_v_x2, __pyx_t_7hdbscan_12dist_metrics_ITYPE_t __pyx_v_size) {
+      |                                                                                                                                                                        ^
+hdbscan/dist_metrics.c:9636:75: warning: incompatible pointer types passing 'struct __pyx_obj_7hdbscan_12dist_metrics_DistanceMetric *' to parameter of type 'struct __pyx_obj_7hdbscan_12dist_metrics_MahalanobisDistance *' [-Wincompatible-pointer-types]
+ 9636 |   __pyx_t_1 = __pyx_f_7hdbscan_12dist_metrics_19MahalanobisDistance_rdist(((struct __pyx_obj_7hdbscan_12dist_metrics_DistanceMetric *)__pyx_v_self), __pyx_v_x1, __pyx_v_x2, __pyx_v_size); if (unlikely(__pyx_t_1 == ((__pyx_t_7hdbscan_12dist_metrics_DTYPE_t)-1.0))) __PYX_ERR(1, 692, __pyx_L1_error)
+      |                                                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+hdbscan/dist_metrics.c:9385:170: note: passing argument to parameter '__pyx_v_self' here
+ 9385 | static __pyx_t_7hdbscan_12dist_metrics_DTYPE_t __pyx_f_7hdbscan_12dist_metrics_19MahalanobisDistance_rdist(struct __pyx_obj_7hdbscan_12dist_metrics_MahalanobisDistance *__pyx_v_self, __pyx_t_7hdbscan_12dist_metrics_DTYPE_t *__pyx_v_x1, __pyx_t_7hdbscan_12dist_metrics_DTYPE_t *__pyx_v_x2, __pyx_t_7hdbscan_12dist_metrics_ITYPE_t __pyx_v_size) {
+      |                                                                                                                                                                          ^
+5 warnings generated.
+/tmp/tmp9fiuqjku/cc build/temp.emscripten_3_1_52_wasm32-cpython-312/hdbscan/dist_metrics.o -o build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/dist_metrics.cpython-312-wasm32-emscripten.so
+installing to build/bdist.emscripten_3_1_52_wasm32/wheel
+running install
+running install_lib
+creating build/bdist.emscripten_3_1_52_wasm32
+creating build/bdist.emscripten_3_1_52_wasm32/wheel
+creating build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan
+copying build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/validity.py -> build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan
+copying build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/_prediction_utils.cpython-312-wasm32-emscripten.so -> build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan
+creating build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan/tests
+copying build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/tests/test_flat.py -> build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan/tests
+copying build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/tests/test_prediction_utils.py -> build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan/tests
+copying build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/tests/__init__.py -> build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan/tests
+copying build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/tests/test_rsl.py -> build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan/tests
+copying build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/tests/test_hdbscan.py -> build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan/tests
+copying build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/flat.py -> build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan
+copying build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/__init__.py -> build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan
+copying build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/_hdbscan_linkage.cpython-312-wasm32-emscripten.so -> build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan
+copying build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/dist_metrics.cpython-312-wasm32-emscripten.so -> build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan
+copying build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/prediction.py -> build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan
+copying build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/plots.py -> build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan
+copying build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/_hdbscan_reachability.cpython-312-wasm32-emscripten.so -> build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan
+copying build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/_hdbscan_boruvka.cpython-312-wasm32-emscripten.so -> build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan
+copying build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/_hdbscan_tree.cpython-312-wasm32-emscripten.so -> build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan
+copying build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/hdbscan_.py -> build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan
+copying build/lib.emscripten_3_1_52_wasm32-cpython-312/hdbscan/robust_single_linkage_.py -> build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan
+running install_data
+creating build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan-0.8.33.data
+creating build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan-0.8.33.data/data
+warning: install_data: setup script did not provide a directory for 'hdbscan/dist_metrics.pxd' -- installing right in 'build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan-0.8.33.data/data'
+
+copying hdbscan/dist_metrics.pxd -> build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan-0.8.33.data/data
+running install_egg_info
+running egg_info
+writing hdbscan.egg-info/PKG-INFO
+writing dependency_links to hdbscan.egg-info/dependency_links.txt
+writing requirements to hdbscan.egg-info/requires.txt
+writing top-level names to hdbscan.egg-info/top_level.txt
+reading manifest file 'hdbscan.egg-info/SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+adding license file 'LICENSE'
+writing manifest file 'hdbscan.egg-info/SOURCES.txt'
+Copying hdbscan.egg-info to build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan-0.8.33-py3.12.egg-info
+running install_scripts
+creating build/bdist.emscripten_3_1_52_wasm32/wheel/hdbscan-0.8.33.dist-info/WHEEL
+creating '/src/packages/hdbscan/build/hdbscan-0.8.33/dist/.tmp-57mp580b/hdbscan-0.8.33-cp312-cp312-emscripten_3_1_52_wasm32.whl' and adding 'build/bdist.emscripten_3_1_52_wasm32/wheel' to it
+adding 'hdbscan/__init__.py'
+adding 'hdbscan/_hdbscan_boruvka.cpython-312-wasm32-emscripten.so'
+adding 'hdbscan/_hdbscan_linkage.cpython-312-wasm32-emscripten.so'
+adding 'hdbscan/_hdbscan_reachability.cpython-312-wasm32-emscripten.so'
+adding 'hdbscan/_hdbscan_tree.cpython-312-wasm32-emscripten.so'
+adding 'hdbscan/_prediction_utils.cpython-312-wasm32-emscripten.so'
+adding 'hdbscan/dist_metrics.cpython-312-wasm32-emscripten.so'
+adding 'hdbscan/flat.py'
+adding 'hdbscan/hdbscan_.py'
+adding 'hdbscan/plots.py'
+adding 'hdbscan/prediction.py'
+adding 'hdbscan/robust_single_linkage_.py'
+adding 'hdbscan/validity.py'
+adding 'hdbscan/tests/__init__.py'
+adding 'hdbscan/tests/test_flat.py'
+adding 'hdbscan/tests/test_hdbscan.py'
+adding 'hdbscan/tests/test_prediction_utils.py'
+adding 'hdbscan/tests/test_rsl.py'
+adding 'hdbscan-0.8.33.data/data/dist_metrics.pxd'
+adding 'hdbscan-0.8.33.dist-info/LICENSE'
+adding 'hdbscan-0.8.33.dist-info/METADATA'
+adding 'hdbscan-0.8.33.dist-info/WHEEL'
+adding 'hdbscan-0.8.33.dist-info/top_level.txt'
+adding 'hdbscan-0.8.33.dist-info/RECORD'
+removing build/bdist.emscripten_3_1_52_wasm32/wheel
+Successfully built /src/packages/hdbscan/build/hdbscan-0.8.33/dist/hdbscan-0.8.33-cp312-cp312-emscripten_3_1_52_wasm32.whl
+Unpacking wheel to /src/packages/hdbscan/build/hdbscan-0.8.33/dist/hdbscan-0.8.33-cp312-cp312-emscripten_3_1_52_wasm32.whl
+Unpacking to: /tmp/tmpxpv5w4v3/hdbscan-0.8.33...OK
+Repacking wheel as /src/packages/hdbscan/build/hdbscan-0.8.33/dist/hdbscan-0.8.33-cp312-cp312-emscripten_3_1_52_wasm32.whl...OK
+[2024-03-22 09:41:02] Succeeded building package hdbscan in 166.6 seconds.                                                

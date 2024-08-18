@@ -1,0 +1,27 @@
+{
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@colorchordsapp/db": ["src"],
+			"@colorchordsapp/db/zod": ["lib/generated/zod"]
+		},
+		"target": "ES2022",
+		"lib": ["dom", "dom.iterable", "ES2022"],
+		"allowJs": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"strictNullChecks": true,
+		"noEmit": true,
+		"esModuleInterop": true,
+		"module": "esnext",
+		"moduleResolution": "Bundler",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"moduleDetection": "force",
+		"jsx": "preserve",
+		"incremental": true,
+		"noUncheckedIndexedAccess": true
+	},
+	"include": ["src/**/*"],
+	"exclude": ["lib/generated"]
+}

@@ -1,0 +1,15 @@
+.degreeHeader {
+	width: 100%;
+	height: min-content;
+	display: grid;
+	grid-template-columns: repeat(8, minmax(50px, 1fr));
+}
+
+.degreeName {
+	font-size: clamp(0.5rem, 1.5vw, 1.2rem);
+	font-weight: 400;
+	padding: var(--space-gutter) 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}

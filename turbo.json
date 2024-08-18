@@ -1,0 +1,52 @@
+{
+	"$schema": "https://turbo.build/schema.json",
+	"globalDotEnv": [".env", ".env.local", ".env.development.local"],
+	"globalEnv": [
+		"NODE_ENV",
+		"NEXT_PUBLIC_SHORTID_LENGTH",
+		"NEXT_PUBLIC_APP_URL",
+		"NEXT_PUBLIC_VERCEL_BLOB_URL",
+		"NEXT_PUBLIC_PYODIDE_VERSION",
+		"NEXT_PUBLIC_HDBSCAN_WHL",
+		"NEXT_PUBLIC_SUPABASE_URL",
+		"NEXT_PUBLIC_SUPABASE_ANON_KEY",
+		"SUPABASE_SERVICE_KEY",
+		"NEXT_PUBLIC_PERISHABLE_KEY",
+		"CLERK_SECRET_KEY",
+		"WEBHOOK_SECRET",
+		"VERCEL_URL",
+		"DATABASE_URL",
+		"BLOB_READ_WRITE_TOKEN"
+	],
+	"pipeline": {
+		"build": {
+			"dependsOn": ["^build"],
+			"outputs": ["dist/**", ".next/**"],
+			"dotEnv": [
+				".env.production.local",
+				".env.local",
+				".env.production",
+				".env"
+			]
+		},
+		"start": {
+			"dependsOn": ["^start"]
+		},
+		"lint": {
+			"dependsOn": ["^lint"]
+		},
+		"type-check": {
+			"dependsOn": ["^type-check"]
+		},
+		"dev": {
+			"cache": false,
+			"persistent": true,
+			"dotEnv": [
+				".env.development.local",
+				".env.local",
+				".env.development",
+				".env"
+			]
+		}
+	}
+}

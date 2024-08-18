@@ -1,0 +1,13 @@
+.link {
+	font-weight: 300;
+	font-size: var(--font-size-subtitle);
+	font-spacing: var(--letter-spacing-subtitle);
+	color: var(--color-primary-primary);
+}
+.link:hover {
+	background-image: var(--accent-gradient-primary);
+	background-size: 100%;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	transition-duration: 1s;
+}

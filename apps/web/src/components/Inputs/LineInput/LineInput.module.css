@@ -1,0 +1,17 @@
+.label {
+	flex-shrink: 0;
+	width: max-content;
+	height: inherit;
+	display: flex;
+	align-items: center;
+	padding: 0 0.5rem;
+
+	border-radius: var(--border-radius-tiny) 0 0 var(--border-radius-tiny);
+	border: 0.5px solid var(--color-primary-primary);
+
+	font-weight: 400;
+	color: var(--color-primary-primary);
+	font-size: var(--font-size-body-small);
+
+	background-color: transparent;
+}

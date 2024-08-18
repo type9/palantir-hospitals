@@ -1,0 +1,12 @@
+.keySpaceRow {
+	cursor: pointer;
+}
+.keySpaceRow:hover {
+	background-color: var(--accent-color-primary);
+	transition: var(--duration-fast);
+}
+.rowFocus {
+	background-color: var(--accent-color-primary);
+	border: var(--border-quiet);
+	border-width: 1px 0;
+}

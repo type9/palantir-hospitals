@@ -1,0 +1,35 @@
+{
+	"name": "@colorchordsapp/api",
+	"version": "0.0.0",
+	"private": true,
+	"main": "src/index.ts",
+	"types": "src/index.ts",
+	"exports": {
+		"./trpc": "./src/trpc/index.ts",
+		"./companion": "./src/companion/index.ts",
+		"./users": "./src/users/index.ts"
+	},
+	"scripts": {
+		"type-check": "tsc --noEmit",
+		"lint": "eslint ./src/**/*.ts --fix"
+	},
+	"dependencies": {
+		"@clerk/nextjs": "^4.29.5",
+		"@colorchordsapp/db": "workspace:*",
+		"@prisma/client": "^5.13.0",
+		"@trpc/server": "11.0.0-next-beta.264",
+		"lodash": "^4.17.21",
+		"nanoid": "^5.0.7",
+		"next": "^14.1.0",
+		"superjson": "^2.2.1",
+		"svix": "^1.24.0",
+		"zod": "3.21.1"
+	},
+	"devDependencies": {
+		"@types/node": "^20",
+		"@typescript-eslint/parser": "^6.18.0",
+		"eslint": "^8.56.0",
+		"eslint-plugin-unused-imports": "^3.0.0",
+		"typescript": "^5"
+	}
+}

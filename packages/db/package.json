@@ -1,0 +1,37 @@
+{
+	"name": "@colorchordsapp/db",
+	"version": "0.0.0",
+	"private": true,
+	"main": "src/index.ts",
+	"types": "src/index.ts",
+	"exports": {
+		".": "./src/index.ts",
+		"./zod": "./lib/generated/zod/index.ts"
+	},
+	"scripts": {
+		"withenv": "npx dotenv-cli -e ../../.env --",
+		"db:generate": "pnpm withenv prisma generate",
+		"db:push": "pnpm withenv prisma db push --skip-generate",
+		"db:makemigration": "pnpm withenv prisma migrate dev --name",
+		"db:studio": "pnpm withenv prisma studio",
+		"lint": "eslint ./src/**/*.ts --fix",
+		"type-check": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@lucia-auth/adapter-prisma": "^4.0.1",
+		"@prisma/adapter-pg": "^5.17.0",
+		"@prisma/client": "5.13.0",
+		"pg": "^8.12.0",
+		"prisma": "5.13.0",
+		"zod": "3.21.1",
+		"zod-prisma-types": "^3.1.6"
+	},
+	"devDependencies": {
+		"@types/pg": "^8.11.6",
+		"@typescript-eslint/parser": "^6.18.0",
+		"dotenv-cli": "^7.4.2",
+		"eslint": "^8.56.0",
+		"eslint-plugin-unused-imports": "^3.0.0",
+		"typescript": "^5.3.3"
+	}
+}
