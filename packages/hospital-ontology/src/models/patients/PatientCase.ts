@@ -1,4 +1,4 @@
-import { KeywordInstance } from "../tags/keyword"
+import { KeywordInstance } from "../tags/Keyword"
 
 export type PatientContext = {
 	/*
