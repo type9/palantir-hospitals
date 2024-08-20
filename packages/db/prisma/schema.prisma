@@ -5,11 +5,11 @@ generator client {
 }
 
 generator zod {
-  provider                    = "zod-prisma-types"
-  output                      = "../lib/generated/zod"
-  useTypeAssertions           = true
-  createRelationValuesTypes   = true
-  useMultipleFiles            = true
+  provider                  = "zod-prisma-types"
+  output                    = "../lib/generated/zod"
+  useTypeAssertions         = true
+  createRelationValuesTypes = true
+  useMultipleFiles          = true
 }
 
 datasource db {
@@ -18,65 +18,75 @@ datasource db {
 }
 
 model UniqueKeyword {
-  id               String           @id @default(cuid())
+  id               String            @id @default(cuid())
   semantic_name    String
   category         KeywordCategory
-  vector           Float[]          // Embedding vector for the keyword
+  vector           Float[] // Embedding vector for the keyword
   keywordInstances KeywordInstance[] @relation("UniqueKeywordToKeywordInstances") // One-to-many relation to KeywordInstance
-  measures        Measure[]        @relation // One-to-many relation to Measure
+  measures         Measure[]         @relation // One-to-many relation to Measure
 }
 
 model KeywordInstance {
-  id              String        @id @default(cuid())
-  relatedCaseId   String        // Reference to the originating patient case
+  id              String               @id @default(cuid())
+  relatedCaseId   String // Reference to the originating patient case
   uniqueKeywordId String
-  measureId        String?
+  measureId       String?
   contextSentence String
-  keywordGroup    KeywordInstanceGroup[] @relation("GroupToKeywordInstances") // Many-to-many relation to KeywordInstanceGroup
-  vector          Float[]       // Embedding vector for the word plus context notes
+  keywordGroupId  String // Foreign key to KeywordInstanceGroup (optional)
+  keywordGroup    KeywordInstanceGroup @relation("GroupToKeywordInstances", fields: [keywordGroupId], references: [id]) // many-to-one relation to KeywordInstanceGroup
+  vector          Float[] // Embedding vector for the word plus context notes
   note            String?
 
   // Relation to UniqueKeyword
-  uniqueKeyword   UniqueKeyword @relation("UniqueKeywordToKeywordInstances", fields: [uniqueKeywordId], references: [id])
+  uniqueKeyword UniqueKeyword @relation("UniqueKeywordToKeywordInstances", fields: [uniqueKeywordId], references: [id])
 
   // Relation to Measure
-  measure         Measure?      @relation(fields: [measureId], references: [id])
+  measure Measure? @relation(fields: [measureId], references: [id])
 }
 
 model Measure {
-  id     String         @id @default(cuid())
-  value  String
-  unitId String?        // Foreign key to UniqueKeyword (optional)
+  id               String            @id @default(cuid())
+  value            String
+  unitId           String? // Foreign key to UniqueKeyword (optional)
   keywordInstances KeywordInstance[] @relation // One-to-many relation to KeywordInstance
 
   // Relation to UniqueKeyword
-  unit   UniqueKeyword? @relation(fields: [unitId], references: [id])
+  unit UniqueKeyword? @relation(fields: [unitId], references: [id])
 }
 
 model KeywordInstanceGroup {
-  id                String                @id @default(cuid())
-  name              String
-  description       String?               // Optional description of the group
-  vector            Float[]               // Embedding vector for the summaristic embedding of the group
-  keywordInstances  KeywordInstance[]     @relation("GroupToKeywordInstances") // Many-to-many relation to KeywordInstance
-  parsedPatientCases ParsedPatientCase[]  @relation("GroupToParsedPatientCases") // One-to-many relation to ParsedPatientCase
-  patientContext   ParsedPatientCase[]    @relation("PatientContextToKeywordGroup") // One-to-one relation to ParsedPatientCase
-  caseProcedure ParsedPatientCase[]    @relation("ProcedureToKeywordGroup") // One-to-one relation to ParsedPatientCase
-  caseResult  ParsedPatientCase[]    @relation("CaseResultToKeywordGroup")
+  id               String            @id @default(cuid())
+  vector           Float[] // Embedding vector for the summaristic embedding of the group
+  keywordInstances KeywordInstance[] @relation("GroupToKeywordInstances") // Many-to-many relation to KeywordInstance
+
+  patientContext ParsedPatientCase? @relation("PatientContextToKeywordGroup") // One-to-one relation to ParsedPatientCase
+  caseProcedure  ParsedPatientCase? @relation("ProcedureToKeywordGroup") // One-to-one relation to ParsedPatientCase
+  caseResult     ParsedPatientCase? @relation("CaseResultToKeywordGroup")
 }
 
 model ParsedPatientCase {
-  id                  String                  @id @default(cuid())
-  patientContextId    String?                 // Foreign key to KeywordInstanceGroup (optional)
-  proceduresId        String?                 // Foreign key to KeywordInstanceGroup (optional)
-  caseResultId        String?                 // Foreign key to KeywordInstanceGroup (optional)
-  vector            Float[]               // Embedding vector for the entire case
+  id                String  @id @default(cuid())
+  patientCaseDataId String  @unique // Foreign key to PatientCaseData, must be unique for a one-to-one relation
+  patientContextId  String? @unique // Foreign key to KeywordInstanceGroup (optional)
+  proceduresId      String? @unique // Foreign key to KeywordInstanceGroup (optional)
+  caseResultId      String? @unique // Foreign key to KeywordInstanceGroup (optional)
+  vector            Float[] // Embedding vector for the entire case
+
   // Relations to KeywordInstanceGroup
-  patientContext      KeywordInstanceGroup?   @relation("PatientContextToKeywordGroup", fields: [patientContextId], references: [id])
-  procedures          KeywordInstanceGroup?   @relation("ProcedureToKeywordGroup", fields: [proceduresId], references: [id])
-  caseResult          KeywordInstanceGroup?   @relation("CaseResultToKeywordGroup", fields: [caseResultId], references: [id])
-  
-  keywordInstanceGroups KeywordInstanceGroup[] @relation("GroupToParsedPatientCases") // Many-to-one relation to KeywordInstanceGroup
+  patientContext KeywordInstanceGroup? @relation("PatientContextToKeywordGroup", fields: [patientContextId], references: [id])
+  procedures     KeywordInstanceGroup? @relation("ProcedureToKeywordGroup", fields: [proceduresId], references: [id])
+  caseResult     KeywordInstanceGroup? @relation("CaseResultToKeywordGroup", fields: [caseResultId], references: [id])
+
+  // Relation to PatientCaseData
+  patientCaseData PatientCaseData @relation(fields: [patientCaseDataId], references: [id])
+}
+
+model PatientCaseData {
+  id                String             @id @default(cuid())
+  parsedPatientCase ParsedPatientCase? @relation
+
+  updatedAt DateTime?
+  parsedAt  DateTime?
 }
 
 enum KeywordCategory {
