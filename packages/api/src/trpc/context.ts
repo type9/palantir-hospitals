@@ -7,8 +7,6 @@ import { initTRPC, TRPCError } from "@trpc/server"
 import superjson from "superjson"
 import { ZodError } from "zod"
 
-import { valdiateRequestSession } from "../users/utils/validateRequestSession"
-
 /**
  * 1. CONTEXT
  *
@@ -22,10 +20,8 @@ import { valdiateRequestSession } from "../users/utils/validateRequestSession"
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async () => {
-	const userData = await valdiateRequestSession(db)
 	return {
 		db,
-		...userData,
 	}
 }
 
@@ -44,10 +40,6 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 		console.log({
 			error: error.name,
 			input,
-			context: {
-				userId: ctx?.userId,
-				anonymousUserID: ctx?.anonymousUserId,
-			},
 		})
 		return {
 			...shape,
@@ -86,22 +78,6 @@ export const createTRPCRouter = t.router
  * can still access user session data if they are logged in
  */
 export const publicProcedure = t.procedure
-
-/**
- * Protected (authenticated) procedure
- *
- * If you want a query or mutation to ONLY be accessible to logged in users, use this. It verifies
- * the session is valid and guarantees `ctx.session.user` is not null.
- *
- * @see https://trpc.io/docs/procedures
- */
-export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
-	if (!ctx.userId) {
-		throw new TRPCError({ code: "UNAUTHORIZED" })
-	}
-	// Make ctx.userId non-nullable in protected procedures
-	return next({ ctx: { userId: ctx.userId, auth: ctx.userId } })
-})
 
 export const getBaseUrl = () => {
 	if (typeof window !== "undefined") return window.location.origin

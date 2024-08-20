@@ -4,7 +4,7 @@ import { KeywordInstanceSchema } from "./keyword" // Assuming you have the Keywo
 
 // Schema for PatientContext
 const PatientContextSchema = z.object({
-	demographics: z.array(KeywordInstanceSchema),
+	demographic: z.array(KeywordInstanceSchema),
 	history: z.array(KeywordInstanceSchema),
 	notes: z.string().optional(),
 })

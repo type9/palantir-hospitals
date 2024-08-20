@@ -1,15 +1,15 @@
 generator client {
-  provider = "prisma-client-js"
-  output = "../lib/generated/client"
+  provider        = "prisma-client-js"
+  output          = "../lib/generated/client"
   previewFeatures = ["driverAdapters"]
 }
 
 generator zod {
-  provider       = "zod-prisma-types"
-  output = "../lib/generated/zod"
-  useTypeAssertions = true
-  createRelationValuesTypes = true
-  useMultipleFiles          = true
+  provider                    = "zod-prisma-types"
+  output                      = "../lib/generated/zod"
+  useTypeAssertions           = true
+  createRelationValuesTypes   = true
+  useMultipleFiles            = true
 }
 
 datasource db {
@@ -17,55 +17,80 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum AccessControl {
-  PUBLIC
-  PRIVATE
+model UniqueKeyword {
+  id               String           @id @default(cuid())
+  semantic_name    String
+  category         KeywordCategory
+  vector           Float[]          // Embedding vector for the keyword
+  keywordInstances KeywordInstance[] @relation("UniqueKeywordToKeywordInstances") // One-to-many relation to KeywordInstance
+  measures        Measure[]        @relation // One-to-many relation to Measure
 }
 
-model SavedCompanion {
-  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt          DateTime @default(now()) @db.Timestamp(6)
-  owner              String?  @db.Uuid
-  anonymousOwner     String?
-  savedInputs        Json?
-  accessControl      AccessControl   @default(PUBLIC)
-  savedConfiguration Json?
-  name               String?  @db.Text
-  description        String?  @db.Text
-  updatedAt          DateTime @default(now()) @db.Timestamp(6)
-  shortId            String   @unique @db.Text
-  user              User?    @relation(fields: [owner], references: [id], onUpdate: Cascade, onDelete: SetNull)
-  anonymousUser     AnonymousUser? @relation(fields: [anonymousOwner], references: [id], onUpdate: Cascade, onDelete: SetNull)
+model KeywordInstance {
+  id              String        @id @default(cuid())
+  relatedCaseId   String        // Reference to the originating patient case
+  uniqueKeywordId String
+  measureId        String?
+  contextSentence String
+  keywordGroup    KeywordInstanceGroup[] @relation("GroupToKeywordInstances") // Many-to-many relation to KeywordInstanceGroup
+  vector          Float[]       // Embedding vector for the word plus context notes
+  note            String?
 
-  @@unique([id, shortId])
+  // Relation to UniqueKeyword
+  uniqueKeyword   UniqueKeyword @relation("UniqueKeywordToKeywordInstances", fields: [uniqueKeywordId], references: [id])
+
+  // Relation to Measure
+  measure         Measure?      @relation(fields: [measureId], references: [id])
 }
 
-model User {
-  id               String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt        DateTime?        @db.Timestamp(6)
-  clerkId          String?          @unique @db.Text
-  lastUpdated      DateTime         @default(now()) @db.Timestamp(6)
-  emailAddresses   Json?
-  lastSignInAt     DateTime?        @db.Timestamp(6)
-  username         String           @unique @db.Text
-  firstName        String?          @db.Text
-  lastName         String?          @db.Text
-  externalAccounts Json?
-  SavedCompanion   SavedCompanion[]
+model Measure {
+  id     String         @id @default(cuid())
+  value  String
+  unitId String?        // Foreign key to UniqueKeyword (optional)
+  keywordInstances KeywordInstance[] @relation // One-to-many relation to KeywordInstance
+
+  // Relation to UniqueKeyword
+  unit   UniqueKeyword? @relation(fields: [unitId], references: [id])
 }
 
-model AnonymousUser {
-  id       String    @id
-  sessions AnonymousSession[]
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  expiresAt DateTime?
-  SavedCompanion   SavedCompanion[]
+model KeywordInstanceGroup {
+  id                String                @id @default(cuid())
+  name              String
+  description       String?               // Optional description of the group
+  vector            Float[]               // Embedding vector for the summaristic embedding of the group
+  keywordInstances  KeywordInstance[]     @relation("GroupToKeywordInstances") // Many-to-many relation to KeywordInstance
+  parsedPatientCases ParsedPatientCase[]  @relation("GroupToParsedPatientCases") // One-to-many relation to ParsedPatientCase
+  patientContext   ParsedPatientCase[]    @relation("PatientContextToKeywordGroup") // One-to-one relation to ParsedPatientCase
+  caseProcedure ParsedPatientCase[]    @relation("ProcedureToKeywordGroup") // One-to-one relation to ParsedPatientCase
+  caseResult  ParsedPatientCase[]    @relation("CaseResultToKeywordGroup")
 }
 
-model AnonymousSession {
-  id        String   @id
-  userId    String
-  expiresAt DateTime
+model ParsedPatientCase {
+  id                  String                  @id @default(cuid())
+  patientContextId    String?                 // Foreign key to KeywordInstanceGroup (optional)
+  proceduresId        String?                 // Foreign key to KeywordInstanceGroup (optional)
+  caseResultId        String?                 // Foreign key to KeywordInstanceGroup (optional)
+  vector            Float[]               // Embedding vector for the entire case
+  // Relations to KeywordInstanceGroup
+  patientContext      KeywordInstanceGroup?   @relation("PatientContextToKeywordGroup", fields: [patientContextId], references: [id])
+  procedures          KeywordInstanceGroup?   @relation("ProcedureToKeywordGroup", fields: [proceduresId], references: [id])
+  caseResult          KeywordInstanceGroup?   @relation("CaseResultToKeywordGroup", fields: [caseResultId], references: [id])
+  
+  keywordInstanceGroups KeywordInstanceGroup[] @relation("GroupToParsedPatientCases") // Many-to-one relation to KeywordInstanceGroup
+}
 
-  anonymousUser     AnonymousUser @relation(references: [id], fields: [userId], onDelete: Cascade)
+enum KeywordCategory {
+  demographic
+  personalHistory
+  medicalHistory
+  symptom
+  binaryMeasure
+  quantitativeMeasure
+  adjectiveMeasure
+  suspectedDiagnosis
+  certainDiagnosis
+  treatment
+  test
+  complication
+  outcome
 }

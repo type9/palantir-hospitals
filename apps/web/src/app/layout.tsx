@@ -3,9 +3,8 @@ import "./globals.css"
 import classNames from "classnames"
 
 import { fontIndex } from "@/fonts/fontIndex"
-import { DEFAULT_METADATA } from "@/webmeta/metadata/defaultMetadata"
 
-export const metadata = DEFAULT_METADATA
+export const metadata = {}
 
 export default function RootLayout({
 	children,
