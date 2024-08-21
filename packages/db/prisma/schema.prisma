@@ -84,9 +84,18 @@ model ParsedPatientCase {
 model PatientCaseData {
   id                String             @id @default(cuid())
   parsedPatientCase ParsedPatientCase? @relation
+  patientUid       String
+  patientNote   String?
+  patientAge    Int?
+  patientGender Gender?
 
+  parsedAt DateTime?
   updatedAt DateTime?
-  parsedAt  DateTime?
+}
+
+enum Gender {
+  M
+  F
 }
 
 enum KeywordCategory {
