@@ -19,7 +19,7 @@ datasource db {
 
 model UniqueKeyword {
   id               String            @id @default(cuid())
-  semantic_name    String
+  semanticName    String
   category         KeywordCategory
   vector           Float[] // Embedding vector for the keyword
   keywordInstances KeywordInstance[] @relation("UniqueKeywordToKeywordInstances") // One-to-many relation to KeywordInstance
@@ -58,9 +58,10 @@ model KeywordInstanceGroup {
   id               String            @id @default(cuid())
   vector           Float[] // Embedding vector for the summaristic embedding of the group
   keywordInstances KeywordInstance[] @relation("GroupToKeywordInstances") // Many-to-many relation to KeywordInstance
+  parentCaseAsProcedure String? // Reference to the originating patient case as a procedure
 
   patientContext ParsedPatientCase? @relation("PatientContextToKeywordGroup") // One-to-one relation to ParsedPatientCase
-  caseProcedure  ParsedPatientCase? @relation("ProcedureToKeywordGroup") // One-to-one relation to ParsedPatientCase
+  caseProcedures  ParsedPatientCase? @relation("ProcedureToKeywordGroup", fields: [parentCaseAsProcedure], references: [id]) // One-to-one relation to ParsedPatientCase
   caseResult     ParsedPatientCase? @relation("CaseResultToKeywordGroup")
 }
 
@@ -68,13 +69,13 @@ model ParsedPatientCase {
   id                String  @id @default(cuid())
   patientCaseDataId String  @unique // Foreign key to PatientCaseData, must be unique for a one-to-one relation
   patientContextId  String? @unique // Foreign key to KeywordInstanceGroup (optional)
-  proceduresId      String? @unique // Foreign key to KeywordInstanceGroup (optional)
+  procedureIds      String[] @unique // Foreign key to KeywordInstanceGroup (optional)
   caseResultId      String? @unique // Foreign key to KeywordInstanceGroup (optional)
   vector            Float[] // Embedding vector for the entire case
 
   // Relations to KeywordInstanceGroup
   patientContext KeywordInstanceGroup? @relation("PatientContextToKeywordGroup", fields: [patientContextId], references: [id])
-  procedures     KeywordInstanceGroup? @relation("ProcedureToKeywordGroup", fields: [proceduresId], references: [id])
+  caseProcedures     KeywordInstanceGroup[] @relation("ProcedureToKeywordGroup")
   caseResult     KeywordInstanceGroup? @relation("CaseResultToKeywordGroup", fields: [caseResultId], references: [id])
 
   // Relation to PatientCaseData
