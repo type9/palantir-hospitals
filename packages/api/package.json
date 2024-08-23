@@ -6,8 +6,7 @@
 	"types": "src/index.ts",
 	"exports": {
 		"./trpc": "./src/trpc/index.ts",
-		"./companion": "./src/companion/index.ts",
-		"./users": "./src/users/index.ts"
+		"./patientData": "./src/patientData/index.ts"
 	},
 	"scripts": {
 		"type-check": "tsc --noEmit",
@@ -24,7 +23,8 @@
 		"openai": "^4.56.0",
 		"superjson": "^2.2.1",
 		"svix": "^1.24.0",
-		"zod": "3.21.1"
+		"zod": "3.21.1",
+		"zod-to-json-schema": "^3.23.2"
 	},
 	"devDependencies": {
 		"@types/node": "^20",

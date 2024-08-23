@@ -3,7 +3,8 @@ import { KeywordCategory } from "@colorchordsapp/db"
 import { openai } from ".."
 import {
 	KeywordTokenizationGroup,
-	KeywordTokenizationGroupSchema,
+	KeywordTokenizationGroupResponseJSONSchema,
+	KeywordTokenizationGroupResponseSchema,
 } from "../../keywords/schema/tokenizedKeywordSchema"
 
 const TOKENIZE_FUNCTION_CALL = "keyword_tokenization"
@@ -35,57 +36,23 @@ export const keywordTokenization = async ({
 				content: `${getUserMessage(promptContext)}\n\nPatientNotes Slice: ${text}`,
 			},
 		],
-		functions: [
-			{
-				name: TOKENIZE_FUNCTION_CALL,
-				description:
-					"Identifies medical keywords in the text, gives them a semantic name, and categorizes them.",
-				parameters: {
-					type: "object",
-					properties: {
-						keywords: {
-							type: "array",
-							items: {
-								type: "object",
-								properties: {
-									semanticName: {
-										type: "string",
-										description:
-											"The name of the keyword to identify for similarities later. Can have a minimal number of tokens separated by a space.",
-									},
-									category: {
-										type: "string",
-										description: `A category from the preset list:\n${KEYWORK_CATEGORIES_LIST}`,
-									},
-									contextSentence: {
-										type: "string",
-										description: `A portion or full component of the sentence that gives the keyword meaning in the context of the patient case.`,
-									},
-								},
-								required: [
-									"semanticName",
-									"category",
-									"contextSentence",
-								],
-							},
-						},
-					},
-					required: ["keywords"],
-				},
+		response_format: {
+			type: "json_schema",
+			json_schema: {
+				schema: KeywordTokenizationGroupResponseJSONSchema,
+				name: "KeywordTokenizationGroupResponseSchema",
 			},
-		],
-		function_call: {
-			name: TOKENIZE_FUNCTION_CALL,
 		},
 	})
 
 	// Extract the function call result from the response
-	const result = response.choices[0]?.message?.tool_calls?.find(
-		(call) => call.id === "keyword_tokenziation",
-	)?.function.arguments
+	const result = response.choices[0]?.message?.content
+
 	if (result) {
-		const functionResult = KeywordTokenizationGroupSchema.parse(result)
-		return functionResult
+		const functionResult = KeywordTokenizationGroupResponseSchema.parse(
+			JSON.parse(result),
+		)
+		return functionResult.keywords
 	}
 
 	throw new Error("Failed to tokenize keywords")
