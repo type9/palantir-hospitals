@@ -66,12 +66,15 @@ export const insertWithVector = async <T extends KEYWORD_VECTOR_TABLE>({
       RETURNING "id", "semanticName", "category", vector::text
   `
 
-	const result = await ctx.db.$queryRawUnsafe<Array<InsertReturnType<T>>>(
+	let result = await ctx.db.$queryRawUnsafe<Array<InsertReturnType<T>>>(
 		query,
 		vectorString,
 	)
 
-	if (result?.[0]) throw new Error("Failed to insert keyword with vector")
+	if (!result?.[0])
+		throw new Error(
+			`Failed to insert keyword with vector table "${table}", ${keys}: ${values}`,
+		)
 
 	// Parse the vector field from string back to number[]
 	const parsedResult = {

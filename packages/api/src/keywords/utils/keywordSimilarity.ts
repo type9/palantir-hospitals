@@ -40,8 +40,8 @@ export const isObviouslySameKeyword = ({
 	keywordA: { semanticName: string; category: KeywordCategory }
 	keywordB: { semanticName: string; category: KeywordCategory }
 }): boolean =>
-	keywordA.category.toLowerCase() !== keywordB.category.toLowerCase() &&
-	keywordA.semanticName.toLowerCase() !== keywordB.semanticName.toLowerCase()
+	keywordA.category.toLowerCase() == keywordB.category.toLowerCase() &&
+	keywordA.semanticName.toLowerCase() == keywordB.semanticName.toLowerCase()
 
 export const getKeywordSimilarity = ({
 	keywordA,
@@ -58,11 +58,6 @@ export const getKeywordSimilarity = ({
 		category: KeywordCategory
 	}
 }): number => {
-	console.log(
-		keywordA.semanticName,
-		keywordB.semanticName,
-		cosineSimilarity(keywordA.embedding, keywordB.embedding),
-	)
 	if (isObviouslySameKeyword({ keywordA, keywordB })) return 1
 	return cosineSimilarity(keywordA.embedding, keywordB.embedding)
 }
