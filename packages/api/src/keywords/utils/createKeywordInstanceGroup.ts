@@ -12,8 +12,9 @@ export const createKeywordInstanceGroup = async ({
 	WithRelatedPatientCase<{ text: string; promptContext?: string }>
 >) => {
 	const keywords = await keywordTokenization({ text, promptContext })
+
 	const keywordInstanceGroupId = await ctx.db.keywordInstanceGroup
-		.create({ select: { id: true } })
+		.create({ data: {}, select: { id: true } })
 		.then((result) => result.id)
 
 	if (!keywordInstanceGroupId || !keywords)

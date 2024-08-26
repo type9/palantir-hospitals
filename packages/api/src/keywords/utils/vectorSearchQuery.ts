@@ -15,6 +15,13 @@ export type KEYWORD_VECTOR_TABLE =
 
 export type KeywordVectorQueryParams = WithServerContext<VectorSearchInput>
 
+export const toVectorString = (vector: number[]): string => {
+	return `[${vector.join(",")}]::vector`
+}
+
+export const parseVector = (vectorString: string): number[] =>
+	vectorString.slice(1, -1).split(",").map(Number)
+
 type TableNameToModelType = {
 	KeywordInstance: KeywordInstance
 	KeywordInstanceGroup: KeywordInstanceGroup
@@ -22,7 +29,11 @@ type TableNameToModelType = {
 }
 
 type QueryByVectorReturnType<T extends KEYWORD_VECTOR_TABLE> =
-	TableNameToModelType[T][]
+	TableNameToModelType[T]
+
+export const formatVector = (vector: number[]): string => {
+	return `[${vector.join(", ")}]`
+}
 
 // Generic raw query function with return type based on the table name
 const queryByVector = async <T extends KEYWORD_VECTOR_TABLE>({
@@ -31,15 +42,27 @@ const queryByVector = async <T extends KEYWORD_VECTOR_TABLE>({
 	topK = 10,
 	ctx,
 }: KeywordVectorQueryParams & { table: T }): Promise<
-	QueryByVectorReturnType<T>
+	QueryByVectorReturnType<T>[]
 > => {
-	const results = await ctx.db.$queryRaw<QueryByVectorReturnType<T>>`
-    SELECT *
-    FROM ${Prisma.raw(table)}
-    ORDER BY vector <-> ${vector}::vector
+	const formattedVector = formatVector(vector)
+	const results = await ctx.db.$queryRaw<QueryByVectorReturnType<T>[]>`
+    SELECT 
+      id, 
+      "semanticName", 
+      category, 
+      vector::text 
+    FROM ${Prisma.raw(`"${table}"`)}
+    ORDER BY vector <-> ${Prisma.raw(`'${formattedVector}'::vector`)}
     LIMIT ${topK};
   `
-	return results
+
+	// Parse the vector field from string back to number[]
+	const parsedResults = results.map((result) => ({
+		...result,
+		vector: parseVector(result.vector as unknown as string),
+	}))
+
+	return parsedResults
 }
 
 export const queryKeywordInstanceByVector = async (

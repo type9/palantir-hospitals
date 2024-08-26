@@ -4,7 +4,9 @@ export const KEYWORD_SIMILARITY_THRESHOLD = 0.9
 
 function cosineSimilarity(vectorA: number[], vectorB: number[]): number {
 	if (vectorA.length !== vectorB.length)
-		throw new Error("Vectors must be of the same length")
+		throw new Error(
+			`Vectors must be of same length ${vectorA.length} !== ${vectorB.length}`,
+		)
 
 	const dotProduct = vectorA.reduce((sum, a, i) => {
 		const b = vectorB[i]
@@ -56,6 +58,11 @@ export const getKeywordSimilarity = ({
 		category: KeywordCategory
 	}
 }): number => {
+	console.log(
+		keywordA.semanticName,
+		keywordB.semanticName,
+		cosineSimilarity(keywordA.embedding, keywordB.embedding),
+	)
 	if (isObviouslySameKeyword({ keywordA, keywordB })) return 1
 	return cosineSimilarity(keywordA.embedding, keywordB.embedding)
 }

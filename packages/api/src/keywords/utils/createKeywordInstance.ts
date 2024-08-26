@@ -8,11 +8,12 @@ import {
 import { WithServerContext } from "../../trpc"
 import { WithKeywordContext } from "../schema/keywordContext"
 import { getUniqueTokenEmbedding } from "./getTokenEmbeddingString"
+import { insertUniqueKeywordWithVector } from "./insertWithVector"
 import {
 	getKeywordSimilarity,
 	KEYWORD_SIMILARITY_THRESHOLD,
 } from "./keywordSimilarity"
-import { queryUniqueKeywordByVector } from "./vectorSearchQuery"
+import { queryUniqueKeywordByVector, toVectorString } from "./vectorSearchQuery"
 
 export const createKeywordInstance = async ({
 	token,
@@ -60,16 +61,14 @@ export const createKeywordInstance = async ({
 
 	let uniqueKeywordId = mergableKeywords?.[0]?.id
 	if (!uniqueKeywordId) {
-		uniqueKeywordId = await ctx.db.uniqueKeyword
-			.create({
-				data: {
-					semanticName: token,
-					category,
-					vector: embedding,
-				},
-				select: { id: true },
-			})
-			.then((result) => result.id)
+		uniqueKeywordId = await insertUniqueKeywordWithVector({
+			data: {
+				semanticName: token,
+				category,
+				vector: embedding,
+			},
+			ctx,
+		}).then((result) => result.id)
 	}
 
 	if (!uniqueKeywordId)
