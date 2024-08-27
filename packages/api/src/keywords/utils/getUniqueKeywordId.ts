@@ -1,12 +1,6 @@
-import {
-	KeywordCategory,
-	KeywordInstance,
-	UniqueKeyword,
-} from "@colorchordsapp/db"
+import { KeywordCategory, UniqueKeyword } from "@colorchordsapp/db"
 
-import { WithServerContext } from "../../trpc"
-import { WithKeywordContext } from "../schema/keywordContext"
-import { KeywordTokenizationGroup } from "../schema/tokenizedKeywordSchema"
+import { WithRelatedPatientCase } from "../../patientData/schemas/patientCaseContext"
 import { getUniqueTokenEmbedding } from "./getTokenEmbeddingString"
 import { insertUniqueKeywordWithVector } from "./insertWithVector"
 import {
@@ -18,8 +12,9 @@ import { queryUniqueKeywordByVector } from "./vectorSearchQuery"
 export const getUniqueKeywordId = async ({
 	token,
 	category,
-	ctx,
-}: WithServerContext<{
+	patientCaseContext,
+	tx,
+}: WithRelatedPatientCase<{
 	token: UniqueKeyword["semanticName"]
 	category: KeywordCategory
 }>) => {
@@ -30,7 +25,8 @@ export const getUniqueKeywordId = async ({
 
 	const similarUniqueKeywords = await queryUniqueKeywordByVector({
 		vector: embedding,
-		ctx,
+		patientCaseContext,
+		tx,
 	})
 
 	const mergableKeywords = similarUniqueKeywords
@@ -68,7 +64,8 @@ export const getUniqueKeywordId = async ({
 				category,
 				vector: embedding,
 			},
-			ctx,
+			patientCaseContext,
+			tx,
 		}).then((result) => result.id)
 	}
 

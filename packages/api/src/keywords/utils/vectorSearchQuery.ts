@@ -5,7 +5,7 @@ import {
 	UniqueKeyword,
 } from "@colorchordsapp/db"
 
-import { WithServerContext } from "../../trpc"
+import { WithRelatedPatientCase } from "../../patientData/schemas/patientCaseContext"
 import { VectorSearchInput } from "../schema/keywordVector"
 
 export type KEYWORD_VECTOR_TABLE =
@@ -13,7 +13,7 @@ export type KEYWORD_VECTOR_TABLE =
 	| "KeywordInstanceGroup"
 	| "UniqueKeyword"
 
-export type KeywordVectorQueryParams = WithServerContext<VectorSearchInput>
+export type KeywordVectorQueryParams = WithRelatedPatientCase<VectorSearchInput>
 
 export const toVectorString = (vector: number[]): string => {
 	return `[${vector.join(",")}]::vector`
@@ -40,12 +40,12 @@ const queryByVector = async <T extends KEYWORD_VECTOR_TABLE>({
 	table,
 	vector,
 	topK = 10,
-	ctx,
+	tx,
 }: KeywordVectorQueryParams & { table: T }): Promise<
 	QueryByVectorReturnType<T>[]
 > => {
 	const formattedVector = formatVector(vector)
-	const results = await ctx.db.$queryRaw<QueryByVectorReturnType<T>[]>`
+	const results = await tx.$queryRaw<QueryByVectorReturnType<T>[]>`
     SELECT 
       id, 
       "semanticName", 

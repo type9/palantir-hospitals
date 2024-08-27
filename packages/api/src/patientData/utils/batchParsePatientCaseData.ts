@@ -8,62 +8,83 @@ export const batchParsePatientCaseData = async ({
 	rowData,
 	ctx,
 }: WithServerContext<{ rowData: PatientCaseData }>) => {
-	if (!rowData.patientNote) throw new Error("Patient note is missing")
 	const relatedCaseId = rowData.id
-	console.time(`BatchPatientDataParse CaseID ${relatedCaseId}`)
+	try {
+		console.time(`BatchPatientDataParse CaseID ${relatedCaseId}`)
+		await ctx.db.$transaction(
+			async (tx) => {
+				console.time(`Tokenizing CaseID ${relatedCaseId}`)
+				if (!rowData.patientNote)
+					throw new Error("Patient note is missing")
+				const batchTokenization = await batchTokenizePatientNote(
+					rowData.patientNote,
+				)
+				console.timeEnd(`Tokenizing CaseID ${relatedCaseId}`)
 
-	console.time(`Tokenizing CaseID ${relatedCaseId}`)
-	const batchTokenization = await batchTokenizePatientNote(
-		rowData.patientNote,
-	)
-	console.timeEnd(`Tokenizing CaseID ${relatedCaseId}`)
+				console.time(
+					`Creating keyword groups for CaseID ${relatedCaseId}`,
+				)
+				const parsedContextKeywordGroupId =
+					await createKeywordInstanceGroup({
+						keywords: batchTokenization.context,
+						patientCaseContext: { relatedCaseId },
+						tx,
+					})
 
-	console.time(`Creating keyword groups for CaseID ${relatedCaseId}`)
-	const parsedContextKeywordGroupId = await createKeywordInstanceGroup({
-		keywords: batchTokenization.context,
-		patientCaseContext: { relatedCaseId },
-		ctx,
-	})
+				const parsedProceduresGroupIds = await Promise.all(
+					batchTokenization.procedures.map(async (procedure) =>
+						createKeywordInstanceGroup({
+							keywords: procedure,
+							patientCaseContext: { relatedCaseId },
+							tx,
+						}),
+					),
+				)
 
-	const parsedProceduresGroupIds = await Promise.all(
-		batchTokenization.procedures.map(async (procedure) =>
-			createKeywordInstanceGroup({
-				keywords: procedure,
-				patientCaseContext: { relatedCaseId },
-				ctx,
-			}),
-		),
-	)
+				const parsedResultKeywordGroupId =
+					await createKeywordInstanceGroup({
+						keywords: batchTokenization.result,
+						patientCaseContext: { relatedCaseId },
+						tx,
+					})
+				console.timeEnd(
+					`Creating keyword groups for CaseID ${relatedCaseId}`,
+				)
 
-	const parsedResultKeywordGroupId = await createKeywordInstanceGroup({
-		keywords: batchTokenization.result,
-		patientCaseContext: { relatedCaseId },
-		ctx,
-	})
-	console.timeEnd(`Creating keyword groups for CaseID ${relatedCaseId}`)
+				const parsedPatientCaseId = await tx.parsedPatientCase
+					.create({
+						data: {
+							patientCaseData: { connect: { id: rowData.id } },
+							patientContext: {
+								connect: { id: parsedContextKeywordGroupId },
+							},
+							caseProcedures: {
+								connect: parsedProceduresGroupIds.map((id) => ({
+									id,
+								})),
+							},
+							caseResult: {
+								connect: { id: parsedResultKeywordGroupId },
+							},
+						},
+					})
+					.then((result) => result.id)
 
-	const parsedPatientCaseId = await ctx.db.parsedPatientCase
-		.create({
-			data: {
-				patientCaseData: { connect: { id: rowData.id } },
-				patientContext: {
-					connect: { id: parsedContextKeywordGroupId },
-				},
-				caseProcedures: {
-					connect: parsedProceduresGroupIds.map((id) => ({ id })),
-				},
-				caseResult: { connect: { id: parsedResultKeywordGroupId } },
+				await tx.patientCaseData.update({
+					where: { id: relatedCaseId },
+					data: {
+						parsedAt: new Date(),
+					},
+				})
+				console.log(
+					`Parsed CaseID ${relatedCaseId} with ID ${parsedPatientCaseId}`,
+				)
 			},
-		})
-		.then((result) => result.id)
-
-	await ctx.db.patientCaseData.update({
-		where: { id: relatedCaseId },
-		data: {
-			parsedAt: new Date(),
-		},
-	})
-
-	console.timeEnd(`BatchPatientDataParse CaseID ${relatedCaseId}`)
-	return parsedPatientCaseId
+			{ timeout: 1000 * 60 * 3 },
+		)
+		console.timeEnd(`BatchPatientDataParse CaseID ${relatedCaseId}`)
+	} catch (error) {
+		console.error(`Failed to parse CaseID ${relatedCaseId}`)
+		throw error
+	}
 }

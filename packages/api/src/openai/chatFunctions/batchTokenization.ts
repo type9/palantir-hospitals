@@ -10,7 +10,6 @@ import {
 const MODEL = "gpt-4o-2024-08-06"
 const SYSTEM_MESSAGE =
 	"You are a doctor reviewing and categorizing medical cases via patient notes"
-const KEYWORK_CATEGORIES_LIST = Object.values(KeywordCategory).join("")
 
 const USER_MESSAGE = `
 	You are being given medical notes from a medical case with a patient. I would like you to first think of the note as three components: context (context for the medical case, before this instance of care), procedure(s) attempted (as one or many), and result of procedures.
@@ -24,8 +23,8 @@ const USER_MESSAGE = `
 
 		 // Keywords for describing context or procedure
 		symptom 
-		suspectedDiagnosis // a diagnosis that is suspected but not confirmed
-		certainDiagnosis // a diagnosis that is confirmed
+		suspectedDiagnosis // a diagnosis that is suspected but not confirmed. avoid using diagnosis in the keyword itself
+		certainDiagnosis // a diagnosis that is confirmed. avoid using diagnosis in the keyword itself
 		treatment // attempted treatment
 		test // a particular medical test
 		complication // unexpected symptom or diagnosis that had to be considered in regards to further procedure

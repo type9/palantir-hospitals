@@ -6,11 +6,9 @@ import { createKeywordInstance } from "./createKeywordInstance"
 export const createKeywordInstanceGroup = async ({
 	keywords,
 	patientCaseContext,
-	ctx,
-}: WithServerContext<
-	WithRelatedPatientCase<{ keywords: KeywordTokenizationGroup }>
->) => {
-	const keywordInstanceGroupId = await ctx.db.keywordInstanceGroup
+	tx,
+}: WithRelatedPatientCase<{ keywords: KeywordTokenizationGroup }>) => {
+	const keywordInstanceGroupId = await tx.keywordInstanceGroup
 		.create({ data: {}, select: { id: true } })
 		.then((result) => result.id)
 
@@ -25,14 +23,14 @@ export const createKeywordInstanceGroup = async ({
 			category: keyword.category,
 			keywordContext: { keywordInstanceGroupId }, // Passing the group ID for relation
 			patientCaseContext,
-			ctx,
+			tx,
 		}),
 	)
 
 	const keywordInstanceIds = await Promise.all(keywordInstancePromises)
 
 	// Update the KeywordInstanceGroup with the associated keyword instances
-	await ctx.db.keywordInstanceGroup.update({
+	await tx.keywordInstanceGroup.update({
 		where: { id: keywordInstanceGroupId },
 		data: {
 			keywordInstances: {

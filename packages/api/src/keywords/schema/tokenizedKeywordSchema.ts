@@ -25,7 +25,7 @@ export const KeywordTokenizationSchema = z.object({
 		})
 		.optional()
 		.describe(
-			"A measure word that describes the semantic keyword. Can be qualitative or quantitative. Examples: 'intense', '135 degrees', '15mL', 'lacking'",
+			"A measure word that describes the semantic keyword. Can be qualitative, quantitative or even relatively vague. Examples: 'intense', '135 degrees', '15mL', 'lacking', 'normal', 'unusual'",
 		),
 	contextSentence: z
 		.string()

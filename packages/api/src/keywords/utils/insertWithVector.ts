@@ -5,7 +5,7 @@ import {
 	UniqueKeyword,
 } from "@colorchordsapp/db"
 
-import { WithServerContext } from "../../trpc"
+import { WithRelatedPatientCase } from "../../patientData/schemas/patientCaseContext"
 import { formatVector, parseVector } from "./vectorSearchQuery"
 
 export type KEYWORD_VECTOR_TABLE =
@@ -14,7 +14,7 @@ export type KEYWORD_VECTOR_TABLE =
 	| "UniqueKeyword"
 
 export type KeywordVectorInsertParams<T extends KEYWORD_VECTOR_TABLE> =
-	WithServerContext<{
+	WithRelatedPatientCase<{
 		table: T
 		data: {
 			id?: string
@@ -37,7 +37,7 @@ type InsertReturnType<T extends KEYWORD_VECTOR_TABLE> = TableNameToModelType[T]
 export const insertWithVector = async <T extends KEYWORD_VECTOR_TABLE>({
 	table,
 	data,
-	ctx,
+	tx,
 }: KeywordVectorInsertParams<T>): Promise<InsertReturnType<T>> => {
 	const vectorString = formatVector(data.vector)
 	const id = data.id ?? createDefaultId()
@@ -66,7 +66,7 @@ export const insertWithVector = async <T extends KEYWORD_VECTOR_TABLE>({
       RETURNING "id", "semanticName", "category", vector::text
   `
 
-	let result = await ctx.db.$queryRawUnsafe<Array<InsertReturnType<T>>>(
+	let result = await tx.$queryRawUnsafe<Array<InsertReturnType<T>>>(
 		query,
 		vectorString,
 	)

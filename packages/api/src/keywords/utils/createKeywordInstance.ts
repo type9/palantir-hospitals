@@ -10,25 +10,31 @@ export const createKeywordInstance = async ({
 	measure,
 	keywordContext,
 	patientCaseContext,
-	ctx,
-}: WithServerContext<
-	WithKeywordContext<{
-		token: KeywordTokenizationGroup[0]["semanticName"]
-		contextSentence: KeywordTokenizationGroup[0]["contextSentence"]
-		category: KeywordTokenizationGroup[0]["category"]
-		measure?: KeywordTokenizationGroup[0]["measure"]
-	}>
->) => {
-	const uniqueKeywordId = await getUniqueKeywordId({ token, category, ctx })
+	tx,
+}: WithKeywordContext<{
+	token: KeywordTokenizationGroup[0]["semanticName"]
+	contextSentence: KeywordTokenizationGroup[0]["contextSentence"]
+	category: KeywordTokenizationGroup[0]["category"]
+	measure?: KeywordTokenizationGroup[0]["measure"]
+}>) => {
+	const uniqueKeywordId = await getUniqueKeywordId({
+		token,
+		category,
+		tx,
+		patientCaseContext,
+	})
 	const measureUniqueKeywordId = measure
 		? await getUniqueKeywordId({
 				token: measure.value,
 				category: measure.category,
-				ctx,
+				tx,
+				patientCaseContext,
 			})
 		: null
+	if (uniqueKeywordId && measureUniqueKeywordId)
+		console.log(`${uniqueKeywordId} ${measureUniqueKeywordId}`)
 
-	const keywordInstance = await ctx.db.keywordInstance.create({
+	const keywordInstance = await tx.keywordInstance.create({
 		data: {
 			relatedCaseId: patientCaseContext.relatedCaseId,
 			uniqueKeywordId,
