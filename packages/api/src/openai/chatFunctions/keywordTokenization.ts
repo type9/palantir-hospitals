@@ -7,7 +7,6 @@ import {
 	KeywordTokenizationGroupResponseSchema,
 } from "../../keywords/schema/tokenizedKeywordSchema"
 
-const TOKENIZE_FUNCTION_CALL = "keyword_tokenization"
 const MODEL = "gpt-4o-mini"
 const SYSTEM_MESSAGE = "You are a systematic medical keyword identifier"
 const KEYWORK_CATEGORIES_LIST = Object.values(KeywordCategory).join("\n")
@@ -33,7 +32,7 @@ export const keywordTokenization = async ({
 			{ role: "system", content: SYSTEM_MESSAGE },
 			{
 				role: "user",
-				content: `${getUserMessage(promptContext)}\n\nPatientNotes Slice: ${text}`,
+				content: `${getUserMessage(promptContext)}\n\nPatientNotes Slice:\n${text}`,
 			},
 		],
 		response_format: {

@@ -1,87 +1,32 @@
-import {
-	KeywordCategory,
-	KeywordInstance,
-	KeywordInstanceGroup,
-	UniqueKeyword,
-} from "@colorchordsapp/db"
-import { uniq } from "lodash"
-
 import { WithServerContext } from "../../trpc"
 import { WithKeywordContext } from "../schema/keywordContext"
-import { getUniqueTokenEmbedding } from "./getTokenEmbeddingString"
-import { insertUniqueKeywordWithVector } from "./insertWithVector"
-import {
-	getKeywordSimilarity,
-	KEYWORD_SIMILARITY_THRESHOLD,
-} from "./keywordSimilarity"
-import { queryUniqueKeywordByVector } from "./vectorSearchQuery"
+import { KeywordTokenizationGroup } from "../schema/tokenizedKeywordSchema"
+import { getUniqueKeywordId } from "./getUniqueKeywordId"
 
 export const createKeywordInstance = async ({
 	token,
 	contextSentence,
 	category,
+	measure,
 	keywordContext,
 	patientCaseContext,
 	ctx,
 }: WithServerContext<
 	WithKeywordContext<{
-		token: UniqueKeyword["semanticName"]
-		contextSentence: KeywordInstance["contextSentence"]
-		category: KeywordCategory
+		token: KeywordTokenizationGroup[0]["semanticName"]
+		contextSentence: KeywordTokenizationGroup[0]["contextSentence"]
+		category: KeywordTokenizationGroup[0]["category"]
+		measure?: KeywordTokenizationGroup[0]["measure"]
 	}>
 >) => {
-	const { embedding } = await getUniqueTokenEmbedding({
-		token,
-		tokenCategory: category,
-	})
-
-	const similarUniqueKeywords = await queryUniqueKeywordByVector({
-		vector: embedding,
-		ctx,
-	})
-
-	const mergableKeywords = similarUniqueKeywords
-		.map((keyword) => ({
-			keyword,
-			similarity: getKeywordSimilarity({
-				keywordA: {
-					semanticName: token,
-					embedding,
-					category,
-				},
-				keywordB: {
-					semanticName: keyword.semanticName,
-					embedding: keyword.vector,
-					category: keyword.category,
-				},
-			}),
-		}))
-		.filter((result) => result.similarity >= KEYWORD_SIMILARITY_THRESHOLD)
-		.sort((a, b) => b.similarity - a.similarity)
-		.map((result) => result.keyword)
-
-	let uniqueKeywordId = mergableKeywords?.[0]?.id
-
-	if (mergableKeywords?.[0]) {
-		console.log(
-			`Merging "${token}" with "${mergableKeywords[0].semanticName}"`,
-		)
-	}
-	if (!uniqueKeywordId) {
-		uniqueKeywordId = await insertUniqueKeywordWithVector({
-			data: {
-				semanticName: token,
-				category,
-				vector: embedding,
-			},
-			ctx,
-		}).then((result) => result.id)
-	}
-
-	if (!uniqueKeywordId)
-		throw new Error(
-			"Error creating KeywordInstace. Missing UniqueKeywordId",
-		)
+	const uniqueKeywordId = await getUniqueKeywordId({ token, category, ctx })
+	const measureUniqueKeywordId = measure
+		? await getUniqueKeywordId({
+				token: measure.value,
+				category: measure.category,
+				ctx,
+			})
+		: null
 
 	const keywordInstance = await ctx.db.keywordInstance.create({
 		data: {
@@ -89,6 +34,7 @@ export const createKeywordInstance = async ({
 			uniqueKeywordId,
 			contextSentence,
 			keywordGroupId: keywordContext.keywordInstanceGroupId,
+			measureId: measureUniqueKeywordId,
 		},
 		select: { id: true },
 	})

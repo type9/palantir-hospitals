@@ -1,6 +1,6 @@
 import { KeywordCategory } from "@colorchordsapp/db"
 
-export const KEYWORD_SIMILARITY_THRESHOLD = 0.9
+export const KEYWORD_SIMILARITY_THRESHOLD = 0.85
 
 function cosineSimilarity(vectorA: number[], vectorB: number[]): number {
 	if (vectorA.length !== vectorB.length)

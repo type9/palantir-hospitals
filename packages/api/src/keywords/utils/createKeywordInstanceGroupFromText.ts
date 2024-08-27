@@ -1,15 +1,20 @@
+import { keywordTokenization } from "../../openai/chatFunctions/keywordTokenization"
 import { WithRelatedPatientCase } from "../../patientData/schemas/patientCaseContext"
 import { WithServerContext } from "../../trpc"
-import { KeywordTokenizationGroup } from "../schema/tokenizedKeywordSchema"
 import { createKeywordInstance } from "./createKeywordInstance"
 
-export const createKeywordInstanceGroup = async ({
-	keywords,
+export const createKeywordInstanceGroupFromText = async ({
+	text,
+	promptContext,
 	patientCaseContext,
 	ctx,
 }: WithServerContext<
-	WithRelatedPatientCase<{ keywords: KeywordTokenizationGroup }>
+	WithRelatedPatientCase<{ text: string; promptContext?: string }>
 >) => {
+	console.time(`Tokenizing caseID: ${patientCaseContext.relatedCaseId}`)
+	const keywords = await keywordTokenization({ text, promptContext })
+	console.timeEnd(`Tokenizing caseID: ${patientCaseContext.relatedCaseId}`)
+
 	const keywordInstanceGroupId = await ctx.db.keywordInstanceGroup
 		.create({ data: {}, select: { id: true } })
 		.then((result) => result.id)
