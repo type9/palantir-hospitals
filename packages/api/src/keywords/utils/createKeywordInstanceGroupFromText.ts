@@ -8,6 +8,7 @@ export const createKeywordInstanceGroupFromText = async ({
 	promptContext,
 	patientCaseContext,
 	ctx,
+	tx,
 }: WithServerContext<
 	WithRelatedPatientCase<{ text: string; promptContext?: string }>
 >) => {
@@ -30,7 +31,7 @@ export const createKeywordInstanceGroupFromText = async ({
 			category: keyword.category,
 			keywordContext: { keywordInstanceGroupId }, // Passing the group ID for relation
 			patientCaseContext,
-			ctx,
+			tx,
 		}),
 	)
 

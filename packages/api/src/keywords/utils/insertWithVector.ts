@@ -6,6 +6,7 @@ import {
 } from "@colorchordsapp/db"
 
 import { WithRelatedPatientCase } from "../../patientData/schemas/patientCaseContext"
+import { WithTransactionContext } from "../../trpc"
 import { formatVector, parseVector } from "./vectorSearchQuery"
 
 export type KEYWORD_VECTOR_TABLE =
@@ -14,7 +15,7 @@ export type KEYWORD_VECTOR_TABLE =
 	| "UniqueKeyword"
 
 export type KeywordVectorInsertParams<T extends KEYWORD_VECTOR_TABLE> =
-	WithRelatedPatientCase<{
+	WithTransactionContext<{
 		table: T
 		data: {
 			id?: string

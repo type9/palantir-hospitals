@@ -25,8 +25,15 @@ export const createTRPCContext = async () => {
 	}
 }
 
+export type TransactionContext = Parameters<typeof db.$transaction>[0] extends (
+	tx: infer T,
+) => any
+	? T
+	: never
+
 export type ServerContext = Awaited<ReturnType<typeof createTRPCContext>>
 export type WithServerContext<T> = T & { ctx: ServerContext }
+export type WithTransactionContext<T> = T & { tx: TransactionContext }
 
 /**
  * 2. INITIALIZATION

@@ -1,3 +1,7 @@
+import {
+	formatKeywordCategory,
+	formatKeywordSemanticName,
+} from "./formatKeyword"
 import { getTextEmbedding } from "./getTextEmbedding"
 
 export const formatTokenEmbeddingString = ({
@@ -6,15 +10,28 @@ export const formatTokenEmbeddingString = ({
 }: {
 	token: string
 	tokenCategory: string
-}) => `${tokenCategory} - ${token}`
+}) =>
+	`${formatKeywordCategory(tokenCategory)} ${formatKeywordSemanticName(token)}`
+
+export const getKeywordIndexString = ({
+	semanticName,
+	category,
+}: {
+	semanticName: string
+	category: string
+}) =>
+	formatTokenEmbeddingString({ token: semanticName, tokenCategory: category })
 
 export const getUniqueTokenEmbedding = ({
-	token,
-	tokenCategory,
+	semanticName,
+	category,
 }: {
-	token: string
-	tokenCategory: string
+	semanticName: string
+	category: string
 }) =>
 	getTextEmbedding({
-		text: formatTokenEmbeddingString({ token, tokenCategory }),
+		text: formatTokenEmbeddingString({
+			token: semanticName,
+			tokenCategory: category,
+		}),
 	})

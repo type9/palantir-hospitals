@@ -6,6 +6,7 @@ import {
 } from "@colorchordsapp/db"
 
 import { WithRelatedPatientCase } from "../../patientData/schemas/patientCaseContext"
+import { WithTransactionContext } from "../../trpc"
 import { VectorSearchInput } from "../schema/keywordVector"
 
 export type KEYWORD_VECTOR_TABLE =
@@ -13,7 +14,10 @@ export type KEYWORD_VECTOR_TABLE =
 	| "KeywordInstanceGroup"
 	| "UniqueKeyword"
 
-export type KeywordVectorQueryParams = WithRelatedPatientCase<VectorSearchInput>
+export type KeywordVectorQueryParams =
+	WithTransactionContext<VectorSearchInput> & {
+		maxCosineDistance?: number // add the maxCosineDistance parameter
+	}
 
 export const toVectorString = (vector: number[]): string => {
 	return `[${vector.join(",")}]::vector`
@@ -40,21 +44,24 @@ const queryByVector = async <T extends KEYWORD_VECTOR_TABLE>({
 	table,
 	vector,
 	topK = 10,
+	maxCosineDistance = 1.0, // default to 1.0 if not provided
 	tx,
 }: KeywordVectorQueryParams & { table: T }): Promise<
 	QueryByVectorReturnType<T>[]
 > => {
 	const formattedVector = formatVector(vector)
 	const results = await tx.$queryRaw<QueryByVectorReturnType<T>[]>`
-    SELECT 
-      id, 
-      "semanticName", 
-      category, 
-      vector::text 
-    FROM ${Prisma.raw(`"${table}"`)}
-    ORDER BY vector <-> ${Prisma.raw(`'${formattedVector}'::vector`)}
-    LIMIT ${topK};
-  `
+	  SELECT 
+		id, 
+		"semanticName", 
+		category, 
+		vector::text,
+		vector <-> ${Prisma.raw(`'${formattedVector}'::vector`)} AS distance
+	  FROM ${Prisma.raw(`"${table}"`)}
+	  WHERE vector <-> ${Prisma.raw(`'${formattedVector}'::vector`)} <= ${maxCosineDistance}
+	  ORDER BY distance ASC
+	  LIMIT ${topK};
+	`
 
 	// Parse the vector field from string back to number[]
 	const parsedResults = results.map((result) => ({

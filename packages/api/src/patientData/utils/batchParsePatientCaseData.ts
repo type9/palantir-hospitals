@@ -1,90 +1,110 @@
 import { PatientCaseData } from "@colorchordsapp/db"
+import _ from "lodash"
 
-import { createKeywordInstanceGroup } from "../../keywords/utils/createKeywordInstanceGroup"
+import { insertUniqueKeywordWithVector } from "../../keywords/utils/insertWithVector"
+import { upsertRelation } from "../../keywords/utils/upsertRelation"
 import { batchTokenizePatientNote } from "../../openai/chatFunctions/batchTokenization"
-import { WithServerContext } from "../../trpc"
+import { WithServerContext, WithTransactionContext } from "../../trpc"
+import { extractAndMergeNewKeywordsFromTokens } from "./extractAndMergeNewKeywordsFromTokens"
+import {
+	getAllKeywordRelationshipsByKeywordMap,
+	NewKeywordGroup,
+} from "./getAllKeywordRelationshipsByKeywordMap"
+import { createKeywordGroupsPromises } from "./parsedPatientPromises"
+import { retryWithCooldown } from "./retryWithCooldown"
+
+const tokenizationCooldownMs = 100
+const tokenizationRetries = 3
+const batchParseTransactionTimeout = 1000 * 60 * 5 // total time limit for entire batch to be completed before timing out
 
 export const batchParsePatientCaseData = async ({
-	rowData,
+	rows,
 	ctx,
-}: WithServerContext<{ rowData: PatientCaseData }>) => {
-	const relatedCaseId = rowData.id
-	try {
-		console.time(`BatchPatientDataParse CaseID ${relatedCaseId}`)
-		await ctx.db.$transaction(
-			async (tx) => {
-				console.time(`Tokenizing CaseID ${relatedCaseId}`)
-				if (!rowData.patientNote)
-					throw new Error("Patient note is missing")
-				const batchTokenization = await batchTokenizePatientNote(
-					rowData.patientNote,
-				)
-				console.timeEnd(`Tokenizing CaseID ${relatedCaseId}`)
+}: WithServerContext<{ rows: PatientCaseData[] }>) => {
+	const tokenizedCasePromises = rows.map(async (rowData) => {
+		return {
+			id: rowData.id,
+			data: await retryWithCooldown(
+				async () =>
+					await batchTokenizePatientNote(rowData?.patientNote ?? ""),
+				tokenizationRetries,
+				tokenizationCooldownMs,
+			),
+		}
+	})
 
-				console.time(
-					`Creating keyword groups for CaseID ${relatedCaseId}`,
-				)
-				const parsedContextKeywordGroupId =
-					await createKeywordInstanceGroup({
-						keywords: batchTokenization.context,
-						patientCaseContext: { relatedCaseId },
-						tx,
-					})
+	const batchName = `batch_${rows.map((row) => row.id).join(",")}`
+	const batchCount = rows.length
+	console.time(`Total BatchParse ${batchName} (${batchCount} cases)`)
 
-				const parsedProceduresGroupIds = await Promise.all(
-					batchTokenization.procedures.map(async (procedure) =>
-						createKeywordInstanceGroup({
-							keywords: procedure,
-							patientCaseContext: { relatedCaseId },
-							tx,
-						}),
-					),
-				)
+	console.time(`Tokenizing ${batchName}`)
+	//filter cases just incase there are any undefined data
+	const tokenizedCases = (await Promise.all(tokenizedCasePromises)).filter(
+		(rowData) => rowData.data !== undefined,
+	)
+	console.timeEnd(`Tokenizing ${batchName}`)
 
-				const parsedResultKeywordGroupId =
-					await createKeywordInstanceGroup({
-						keywords: batchTokenization.result,
-						patientCaseContext: { relatedCaseId },
-						tx,
-					})
-				console.timeEnd(
-					`Creating keyword groups for CaseID ${relatedCaseId}`,
-				)
-
-				const parsedPatientCaseId = await tx.parsedPatientCase
-					.create({
-						data: {
-							patientCaseData: { connect: { id: rowData.id } },
-							patientContext: {
-								connect: { id: parsedContextKeywordGroupId },
-							},
-							caseProcedures: {
-								connect: parsedProceduresGroupIds.map((id) => ({
-									id,
-								})),
-							},
-							caseResult: {
-								connect: { id: parsedResultKeywordGroupId },
-							},
-						},
-					})
-					.then((result) => result.id)
-
-				await tx.patientCaseData.update({
-					where: { id: relatedCaseId },
-					data: {
-						parsedAt: new Date(),
-					},
+	await ctx.db.$transaction(
+		async (tx) => {
+			console.time(`Processing UniqueKeywords ${batchName}`)
+			const { finalUniqueKeywords, finalUniqueKeywordsToUpsert } =
+				await extractAndMergeNewKeywordsFromTokens({
+					tokenizedCases,
+					tx,
 				})
-				console.log(
-					`Parsed CaseID ${relatedCaseId} with ID ${parsedPatientCaseId}`,
+			console.timeEnd(`Processing UniqueKeywords ${batchName}`)
+
+			console.time(`Processing Keyword Relationships ${batchName}`)
+			const { newUniqueKeywordRelations, newKeywordGroups } =
+				getAllKeywordRelationshipsByKeywordMap({
+					tokenizedCases,
+					keywordMap: finalUniqueKeywords,
+					tx,
+				})
+			console.timeEnd(`Processing Keyword Relationships ${batchName}`)
+
+			const upsertUniqueKeywordsPromises =
+				finalUniqueKeywordsToUpsert.map(async (keyword) => {
+					const vector = keyword.vector
+					if (!vector)
+						throw new Error(
+							"Keyword vector is missing from an upsertable keyword",
+						)
+
+					return await insertUniqueKeywordWithVector({
+						data: {
+							id: keyword.id,
+							semanticName: keyword.semanticName,
+							vector,
+						},
+						tx,
+					})
+				})
+
+			console.time(`Upserting UniqueKeywords ${batchName}`)
+			await Promise.all(upsertUniqueKeywordsPromises)
+			console.timeEnd(`Upserting UniqueKeywords ${batchName}`)
+
+			const keywordGroupPromises = createKeywordGroupsPromises({
+				newKeywordGroups,
+				tx,
+			})
+
+			console.time(`Upserting KeywordGroups ${batchName}`)
+			await Promise.all(keywordGroupPromises)
+			console.timeEnd(`Upserting KeywordGroups ${batchName}`)
+
+			const upsertUniqueKeywordRelationsPromises =
+				newUniqueKeywordRelations.map((relation) =>
+					upsertRelation({ relation, tx }),
 				)
-			},
-			{ timeout: 1000 * 60 * 3 },
-		)
-		console.timeEnd(`BatchPatientDataParse CaseID ${relatedCaseId}`)
-	} catch (error) {
-		console.error(`Failed to parse CaseID ${relatedCaseId}`)
-		throw error
-	}
+
+			console.time(`Upserting UniqueKeywordRelations ${batchName}`)
+			await Promise.all(upsertUniqueKeywordRelationsPromises)
+			console.timeEnd(`Upserting UniqueKeywordRelations ${batchName}`)
+		},
+		{ timeout: batchParseTransactionTimeout },
+	)
+
+	console.time(`Total BatchParse ${batchName} (${batchCount} cases)`)
 }

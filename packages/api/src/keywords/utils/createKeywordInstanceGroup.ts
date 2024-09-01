@@ -1,5 +1,4 @@
 import { WithRelatedPatientCase } from "../../patientData/schemas/patientCaseContext"
-import { WithServerContext } from "../../trpc"
 import { KeywordTokenizationGroup } from "../schema/tokenizedKeywordSchema"
 import { createKeywordInstance } from "./createKeywordInstance"
 
