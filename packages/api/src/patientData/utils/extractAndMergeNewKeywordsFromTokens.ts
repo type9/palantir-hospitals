@@ -49,27 +49,32 @@ export const extractAndMergeNewKeywordsFromTokens = async ({
 	})
 	//get all the unique keywords that already exist in the database and merge it into a look-up map
 	//at this point, any remote existing keywords will have an id
+	console.time(`Checking backend for existing keywords`)
 	const obviouslyDedupedUniqueKeywords = await getExistingUniqueKeywordMap({
 		tx,
 		keywordLookupMap: uniqueKeywords,
 	})
+	console.timeEnd(`Checking backend for existing keywords`)
 
 	//for keywords without an id, we need to get the embeddings from the remote model
 	const keywordsNotObviouslyInBackend = Array.from(
 		obviouslyDedupedUniqueKeywords.values(),
 	).filter((keyword) => !keyword.id)
 
+	console.time(`Getting embeddings for new keywords`)
 	const newUniqueKeywordEmbeddings = await Promise.all(
 		keywordsNotObviouslyInBackend.map(async (keyword) => ({
 			keyword,
 			embedding: (await getUniqueTokenEmbedding(keyword)).embedding,
 		})),
 	)
+	console.timeEnd(`Getting embeddings for new keywords`)
 
 	// Initialize the final keyword lookup map and list to be upserted
 	const finalKeywords: FinalUniqueKeywordLookup = new Map()
 	const finalUniqueKeywordsToUpsert: NonNullable<FinalUniqueKeyword>[] = []
 
+	console.time(`Checking embeddings for new keywords`)
 	// Check backend for all possible new unique keywords by embedding. If there is no existing keyword, we will generate a new id
 	await Promise.all(
 		newUniqueKeywordEmbeddings.map(async ({ keyword, embedding }) => {
@@ -115,6 +120,7 @@ export const extractAndMergeNewKeywordsFromTokens = async ({
 			finalUniqueKeywordsToUpsert.push(newKeyword)
 		}),
 	)
+	console.timeEnd(`Checking embeddings for new keywords`)
 
 	// Add all deduplicated keywords that already have an id to the final lookup map
 	obviouslyDedupedUniqueKeywords.forEach((keyword, key) => {

@@ -1,5 +1,3 @@
-import { KeywordCategory } from "@colorchordsapp/db"
-
 import { openai } from ".."
 import {
 	PatientNoteBatchKeywordTokenization,

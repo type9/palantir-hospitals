@@ -106,5 +106,5 @@ export const batchParsePatientCaseData = async ({
 		{ timeout: batchParseTransactionTimeout },
 	)
 
-	console.time(`Total BatchParse ${batchName} (${batchCount} cases)`)
+	console.timeEnd(`Total BatchParse ${batchName} (${batchCount} cases)`)
 }

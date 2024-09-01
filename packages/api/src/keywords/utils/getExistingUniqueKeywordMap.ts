@@ -25,12 +25,15 @@ export const getExistingUniqueKeywordMap = async ({
 		}>
 	>(
 		Prisma.sql`SELECT id, "semanticName", "category"
-		FROM "UniqueKeyword"
-		WHERE ("semanticName", "category") IN (${Prisma.join(
-			uniqueKeys.map(
-				(key) => Prisma.sql`(${key.semanticName}, ${key.category})`,
-			),
-		)})`,
+  FROM "UniqueKeyword"
+  WHERE ("semanticName", "category"::"KeywordCategory") IN (${Prisma.join(
+		uniqueKeys.map(
+			(key) =>
+				Prisma.sql`(${key.semanticName}, ${Prisma.raw(
+					`'${key.category}'::"KeywordCategory"`,
+				)})`,
+		),
+  )})`,
 	)
 
 	// Assign remote IDs to existing keywords in the lookup map

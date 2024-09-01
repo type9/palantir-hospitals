@@ -6,7 +6,7 @@ import { api } from "@/trpc/APIProvider"
 export const TriggerPatientDataParseButton = () => {
 	const { data, isLoading, refetch, error } =
 		api.patientDataRouter.triggerPatientDataParse.useQuery(
-			{},
+			{ reparseOptions: { limit: 10 } },
 			{ enabled: false, retry: false, refetchOnMount: false },
 		)
 
