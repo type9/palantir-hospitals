@@ -1,5 +1,6 @@
 import { PatientCaseData } from "@colorchordsapp/db"
 import _ from "lodash"
+import pLimit from "p-limit"
 
 import { insertUniqueKeywordWithVector } from "../../keywords/utils/insertWithVector"
 import { upsertRelation } from "../../keywords/utils/upsertRelation"
@@ -14,14 +15,24 @@ import { createKeywordGroupsPromises } from "./parsedPatientPromises"
 import { retryWithCooldown } from "./retryWithCooldown"
 
 const tokenizationCooldownMs = 100
-const tokenizationRetries = 3
-const batchParseTransactionTimeout = 1000 * 60 * 5 // total time limit for entire batch to be completed before timing out
+const tokenizationRetries = 5
+const batchParseTransactionTimeout = 1000 * 60 * 20 // total time limit for entire batch to be completed before timing out
+const cache = new Map<string, any>()
+
+const limit = pLimit(20)
 
 export const batchParsePatientCaseData = async ({
 	rows,
 	ctx,
 }: WithServerContext<{ rows: PatientCaseData[] }>) => {
+	const batchName = `batch_${rows.map((row) => row.id).join(",")}`
+	const batchCount = rows.length
+
 	const tokenizedCasePromises = rows.map(async (rowData) => {
+		if (cache.has(batchName)) {
+			console.log(`Cache hit for ${batchName}`)
+			return cache.get(batchName)
+		}
 		return {
 			id: rowData.id,
 			data: await retryWithCooldown(
@@ -33,8 +44,6 @@ export const batchParsePatientCaseData = async ({
 		}
 	})
 
-	const batchName = `batch_${rows.map((row) => row.id).join(",")}`
-	const batchCount = rows.length
 	console.time(`Total BatchParse ${batchName} (${batchCount} cases)`)
 
 	console.time(`Tokenizing ${batchName}`)
@@ -43,6 +52,8 @@ export const batchParsePatientCaseData = async ({
 		(rowData) => rowData.data !== undefined,
 	)
 	console.timeEnd(`Tokenizing ${batchName}`)
+
+	cache.set(batchName, tokenizedCases)
 
 	await ctx.db.$transaction(
 		async (tx) => {
@@ -64,22 +75,35 @@ export const batchParsePatientCaseData = async ({
 			console.timeEnd(`Processing Keyword Relationships ${batchName}`)
 
 			const upsertUniqueKeywordsPromises =
-				finalUniqueKeywordsToUpsert.map(async (keyword) => {
-					const vector = keyword.vector
-					if (!vector)
-						throw new Error(
-							"Keyword vector is missing from an upsertable keyword",
+				finalUniqueKeywordsToUpsert.map((keyword) =>
+					limit(async () => {
+						const vector = keyword.vector
+						if (!vector) {
+							throw new Error(
+								"Keyword vector is missing from an upsertable keyword",
+							)
+						}
+
+						console.time(
+							`Upserting UniqueKeyword ${keyword.category}:${keyword.semanticName}`,
+						)
+						const insertReturn =
+							await insertUniqueKeywordWithVector({
+								data: {
+									id: keyword.id,
+									category: keyword.category,
+									semanticName: keyword.semanticName,
+									vector,
+								},
+								tx,
+							})
+						console.timeEnd(
+							`Upserting UniqueKeyword ${keyword.category}:${keyword.semanticName}`,
 						)
 
-					return await insertUniqueKeywordWithVector({
-						data: {
-							id: keyword.id,
-							semanticName: keyword.semanticName,
-							vector,
-						},
-						tx,
-					})
-				})
+						return insertReturn
+					}),
+				)
 
 			console.time(`Upserting UniqueKeywords ${batchName}`)
 			await Promise.all(upsertUniqueKeywordsPromises)
@@ -96,7 +120,7 @@ export const batchParsePatientCaseData = async ({
 
 			const upsertUniqueKeywordRelationsPromises =
 				newUniqueKeywordRelations.map((relation) =>
-					upsertRelation({ relation, tx }),
+					limit(async () => upsertRelation({ relation, tx })),
 				)
 
 			console.time(`Upserting UniqueKeywordRelations ${batchName}`)

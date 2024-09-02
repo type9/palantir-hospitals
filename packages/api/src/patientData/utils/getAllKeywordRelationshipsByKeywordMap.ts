@@ -13,8 +13,8 @@ export type NewUniqueKeywordRelation = {
 	fromKeywordId: string
 	toKeywordId: string
 	relationType: RelatedKeywords["relationType"]
-	keywordGroupOccurences: string[]
-	parsedCaseOccurences: string[]
+	keywordGroupOccurrences: string[]
+	parsedCaseOccurrences: string[]
 }
 
 export type NewKeywordGroup = {

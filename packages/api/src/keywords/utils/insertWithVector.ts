@@ -2,6 +2,7 @@ import {
 	createDefaultId,
 	KeywordInstance,
 	KeywordInstanceGroup,
+	Prisma,
 	UniqueKeyword,
 } from "@colorchordsapp/db"
 
@@ -40,50 +41,38 @@ export const insertWithVector = async <T extends KEYWORD_VECTOR_TABLE>({
 	data,
 	tx,
 }: KeywordVectorInsertParams<T>): Promise<InsertReturnType<T>> => {
-	const vectorString = formatVector(data.vector)
-	const id = data.id ?? createDefaultId()
+	const vectorString = formatVector(data.vector) // Convert vector to string format
+	const id = data.id ?? createDefaultId() // Generate a new id if not provided
 
+	// Prepare data for the parameterized query
 	const embeddedData = { id, ...data }
 
-	// Create a parameterized query with the formatted vector string
-	const keys = Object.keys(embeddedData)
-		.map((key) => `"${key}"`)
-		.join(", ")
+	// Construct the SQL query using Prisma's SQL template literals
+	const result = await tx.$queryRaw<Array<InsertReturnType<T>>>`
+	  INSERT INTO ${Prisma.raw(`"${table}"`)} 
+	  ("id", "category", "semanticName", "vector")
+	  VALUES (
+		${id}, 
+		${embeddedData.category}::"KeywordCategory",
+		${embeddedData.semanticName}, 
+		${Prisma.raw(`'${vectorString}'::vector`)}
+	  )
+	  RETURNING "id", "semanticName", "category";
+	`
 
-	const values = Object.keys(embeddedData)
-		.map(
-			(key) =>
-				key === "vector"
-					? `$1::vector`
-					: `'${embeddedData[key as keyof typeof embeddedData]}'`, // Use embeddedData here
-		)
-		.join(", ")
-
-	// Modify the query to cast the vector to a string
-	const query = `
-      INSERT INTO "${table}" 
-      (${keys}) 
-      VALUES (${values}) 
-      RETURNING "id", "semanticName", "category", vector::text
-  `
-
-	let result = await tx.$queryRawUnsafe<Array<InsertReturnType<T>>>(
-		query,
-		vectorString,
-	)
-
-	if (!result?.[0])
+	if (!result?.[0]) {
 		throw new Error(
-			`Failed to insert keyword with vector table "${table}", ${keys}: ${values}`,
+			`Failed to insert keyword with vector into table "${table}", data: ${JSON.stringify(data)}`,
 		)
+	}
 
 	// Parse the vector field from string back to number[]
 	const parsedResult = {
-		...result?.[0],
-		vector: result?.[0]?.vector
+		...result[0],
+		vector: result[0]?.vector
 			? parseVector(result[0].vector as unknown as string)
 			: ([] as number[]),
-	} as InsertReturnType<T> // Cast the result to the correct type
+	} as InsertReturnType<T>
 
 	return parsedResult
 }

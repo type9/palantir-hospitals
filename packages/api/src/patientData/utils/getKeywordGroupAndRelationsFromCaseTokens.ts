@@ -87,8 +87,8 @@ export const getNewKeywordGroups = ({
 				fromKeywordId: existingKeywordId,
 				toKeywordId: keyword.id,
 				relationType: "cooccurrence",
-				keywordGroupOccurences: [keywordGroupId],
-				parsedCaseOccurences: [],
+				keywordGroupOccurrences: [keywordGroupId],
+				parsedCaseOccurrences: [],
 			}
 
 			keywordGroupRelations.set(relationKey, newRelation)
@@ -132,21 +132,21 @@ const aggregateKeywordGroupRelations = ({
 			if (aggregatedRelations.has(relationKey)) {
 				// Merge with existing relation
 				const existingRelation = aggregatedRelations.get(relationKey)!
-				existingRelation.keywordGroupOccurences.push(
-					...relation.keywordGroupOccurences,
+				existingRelation.keywordGroupOccurrences.push(
+					...relation.keywordGroupOccurrences,
 				)
 			} else if (aggregatedRelations.has(reverseRelationKey)) {
 				// Merge with the reverse relation
 				const existingReverseRelation =
 					aggregatedRelations.get(reverseRelationKey)!
-				existingReverseRelation.keywordGroupOccurences.push(
-					...relation.keywordGroupOccurences,
+				existingReverseRelation.keywordGroupOccurrences.push(
+					...relation.keywordGroupOccurrences,
 				)
 			} else {
 				// If no existing relation found, add the new relation
 				aggregatedRelations.set(relationKey, {
 					...relation,
-					parsedCaseOccurences: [relatedCaseId], // Set parsedCaseOccurences to include the related case
+					parsedCaseOccurrences: [relatedCaseId], // Set parsedCaseOccurrences to include the related case
 				})
 			}
 		})
@@ -164,8 +164,8 @@ const aggregateKeywordGroupRelations = ({
 			fromKeywordId: relation.toKeywordId,
 			toKeywordId: relation.fromKeywordId,
 			relationType: relation.relationType, // Same relation type as original
-			keywordGroupOccurences: [...relation.keywordGroupOccurences], // Same occurrences as original
-			parsedCaseOccurences: [...relation.parsedCaseOccurences], // Same parsed cases as original
+			keywordGroupOccurrences: [...relation.keywordGroupOccurrences], // Same occurrences as original
+			parsedCaseOccurrences: [...relation.parsedCaseOccurrences], // Same parsed cases as original
 		}
 
 		finalRelations.push(reverseRelation)

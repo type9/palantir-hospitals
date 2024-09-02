@@ -4,8 +4,8 @@ type Relation = {
 	fromKeywordId: string
 	toKeywordId: string
 	relationType: string
-	keywordGroupOccurences: string[]
-	parsedCaseOccurences: string[]
+	keywordGroupOccurrences: string[]
+	parsedCaseOccurrences: string[]
 }
 
 export const upsertRelation = async ({
@@ -13,8 +13,8 @@ export const upsertRelation = async ({
 	tx,
 }: WithTransactionContext<{ relation: Relation }>) => {
 	return await tx.$executeRaw`
-    INSERT INTO "RelatedKeywords" ("fromKeywordId", "toKeywordId", "relationType", "keywordGroupOccurences", "parsedCaseOccurences")
-    VALUES (${relation.fromKeywordId}, ${relation.toKeywordId}, ${relation.relationType}, ${relation.keywordGroupOccurences}, ${relation.parsedCaseOccurences})
+    INSERT INTO "RelatedKeywords" ("fromKeywordId", "toKeywordId", "relationType", "keywordGroupOccurrences", "parsedCaseOccurrences")
+    VALUES (${relation.fromKeywordId}, ${relation.toKeywordId}, ${relation.relationType}, ${relation.keywordGroupOccurrences}, ${relation.parsedCaseOccurrences})
     ON CONFLICT ("fromKeywordId", "toKeywordId")
     DO UPDATE SET 
       "relationType" = EXCLUDED."relationType",

@@ -2,7 +2,7 @@ import { openai } from "../../openai"
 
 export const DEFAULT_MODEL = "text-embedding-3-small"
 
-export const EMBEDDING_DIMENSIONS = 1536
+export const EMBEDDING_DIMENSIONS = 256
 
 export const getTextEmbedding = async ({
 	text,

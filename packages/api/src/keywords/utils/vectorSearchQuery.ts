@@ -5,7 +5,6 @@ import {
 	UniqueKeyword,
 } from "@colorchordsapp/db"
 
-import { WithRelatedPatientCase } from "../../patientData/schemas/patientCaseContext"
 import { WithTransactionContext } from "../../trpc"
 import { VectorSearchInput } from "../schema/keywordVector"
 
@@ -55,7 +54,6 @@ const queryByVector = async <T extends KEYWORD_VECTOR_TABLE>({
 		id, 
 		"semanticName", 
 		category, 
-		vector::text,
 		vector <-> ${Prisma.raw(`'${formattedVector}'::vector`)} AS distance
 	  FROM ${Prisma.raw(`"${table}"`)}
 	  WHERE vector <-> ${Prisma.raw(`'${formattedVector}'::vector`)} <= ${maxCosineDistance}
@@ -66,7 +64,6 @@ const queryByVector = async <T extends KEYWORD_VECTOR_TABLE>({
 	// Parse the vector field from string back to number[]
 	const parsedResults = results.map((result) => ({
 		...result,
-		vector: parseVector(result.vector as unknown as string),
 	}))
 
 	return parsedResults

@@ -10,7 +10,7 @@ export const triggerPatientDataParse = publicProcedure
 
 		console.time("Fetched next batch to parse")
 		const patientData = await getNextPatientData({ ...reparseOptions, ctx })
-		console.time("Fetched next batch to parse")
+		console.timeEnd("Fetched next batch to parse")
 
 		if (!patientData || patientData.length === 0)
 			throw new Error("Error retrieving next parsable patient case")
