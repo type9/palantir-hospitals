@@ -2,6 +2,7 @@ import { createDefaultId } from "@colorchordsapp/db"
 
 import { KeywordTokenizationGroup } from "../../keywords/schema/tokenizedKeywordSchema"
 import { getKeywordIndexString } from "../../keywords/utils/getTokenEmbeddingString"
+import { sortKeywords } from "../../keywords/utils/upsertRelation"
 import {
 	FinalUniqueKeywordLookup,
 	TokenizedCase,
@@ -16,7 +17,13 @@ import {
 export const formatKeywordRelationKey = (
 	fromKeywordKey: string,
 	toKeywordKey: string,
-) => `${fromKeywordKey}-${toKeywordKey}`
+) => {
+	const [firstKeywordKey, secondKeywordKey] = sortKeywords(
+		fromKeywordKey,
+		toKeywordKey,
+	)
+	return `${firstKeywordKey}-${secondKeywordKey}`
+}
 
 export const getNewKeywordGroups = ({
 	relatedCaseId,
@@ -69,15 +76,8 @@ export const getNewKeywordGroups = ({
 				existingKeywordId,
 				keyword.id,
 			)
-			const reversedRelationKey = formatKeywordRelationKey(
-				keyword.id,
-				existingKeywordId,
-			)
-
 			// Check if this relation already exists in the lookup with also checking the reversed key
-			const existingRelation =
-				keywordGroupRelations.get(relationKey) ||
-				keywordGroupRelations.get(reversedRelationKey)
+			const existingRelation = keywordGroupRelations.get(relationKey)
 
 			//if it exists, we return because we are only counting the first instance of a relation
 			if (existingRelation) return
@@ -123,11 +123,6 @@ const aggregateKeywordGroupRelations = ({
 	// Iterate through each KeywordRelationLookup to process relations
 	relations.forEach((relationLookup) => {
 		relationLookup.forEach((relation, relationKey) => {
-			const reverseRelationKey = formatKeywordRelationKey(
-				relation.toKeywordId,
-				relation.fromKeywordId,
-			)
-
 			// Check if the relation or its reverse already exists
 			if (aggregatedRelations.has(relationKey)) {
 				// Merge with existing relation
@@ -135,20 +130,13 @@ const aggregateKeywordGroupRelations = ({
 				existingRelation.keywordGroupOccurrences.push(
 					...relation.keywordGroupOccurrences,
 				)
-			} else if (aggregatedRelations.has(reverseRelationKey)) {
-				// Merge with the reverse relation
-				const existingReverseRelation =
-					aggregatedRelations.get(reverseRelationKey)!
-				existingReverseRelation.keywordGroupOccurrences.push(
-					...relation.keywordGroupOccurrences,
-				)
-			} else {
-				// If no existing relation found, add the new relation
-				aggregatedRelations.set(relationKey, {
-					...relation,
-					parsedCaseOccurrences: [relatedCaseId], // Set parsedCaseOccurrences to include the related case
-				})
+				return
 			}
+			// If no existing relation found, add the new relation
+			aggregatedRelations.set(relationKey, {
+				...relation,
+				parsedCaseOccurrences: [relatedCaseId], // Set parsedCaseOccurrences to include the related case
+			})
 		})
 	})
 
@@ -158,17 +146,6 @@ const aggregateKeywordGroupRelations = ({
 	aggregatedRelations.forEach((relation, relationKey) => {
 		// Add the original relation
 		finalRelations.push(relation)
-
-		// Create and add the reverse relation
-		const reverseRelation: NewUniqueKeywordRelation = {
-			fromKeywordId: relation.toKeywordId,
-			toKeywordId: relation.fromKeywordId,
-			relationType: relation.relationType, // Same relation type as original
-			keywordGroupOccurrences: [...relation.keywordGroupOccurrences], // Same occurrences as original
-			parsedCaseOccurrences: [...relation.parsedCaseOccurrences], // Same parsed cases as original
-		}
-
-		finalRelations.push(reverseRelation)
 	})
 
 	return finalRelations

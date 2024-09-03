@@ -2,7 +2,7 @@ import { WithServerContext } from "../../trpc"
 import type { GetNextPatientDataArgs } from "../schemas/getNextPatientData"
 
 export const getNextPatientData = async ({
-	limit = 10,
+	limit = 20,
 	reparseLtDate,
 	ctx,
 }: WithServerContext<GetNextPatientDataArgs>) => {

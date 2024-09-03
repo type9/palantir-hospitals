@@ -2,7 +2,8 @@ export const retryWithCooldown = async <T>(
 	fn: () => Promise<T>,
 	retries: number,
 	cooldown: number,
-): Promise<T> => {
+	throwError = true,
+): Promise<T | undefined> => {
 	let attempts = 0
 	while (attempts < retries) {
 		try {
@@ -13,8 +14,10 @@ export const retryWithCooldown = async <T>(
 			if (attempts < retries) {
 				console.log(`Retrying in ${cooldown / 1000} seconds...`)
 				await new Promise((resolve) => setTimeout(resolve, cooldown))
-			} else {
+			} else if (throwError) {
 				throw new Error(`All ${retries} attempts failed.`)
+			} else {
+				return undefined
 			}
 		}
 	}
