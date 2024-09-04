@@ -1,8 +1,8 @@
 import { createDefaultId } from "@colorchordsapp/db"
 
 import { KeywordTokenizationGroup } from "../../keywords/schema/tokenizedKeywordSchema"
+import { formatKeywordRelationKey } from "../../keywords/utils/formatKeywordRelationKey"
 import { getKeywordIndexString } from "../../keywords/utils/getTokenEmbeddingString"
-import { sortKeywords } from "../../keywords/utils/upsertRelation"
 import {
 	FinalUniqueKeywordLookup,
 	TokenizedCase,
@@ -13,17 +13,6 @@ import {
 	NewKeywordInstance,
 	NewUniqueKeywordRelation,
 } from "./getAllKeywordRelationshipsByKeywordMap"
-
-export const formatKeywordRelationKey = (
-	fromKeywordKey: string,
-	toKeywordKey: string,
-) => {
-	const [firstKeywordKey, secondKeywordKey] = sortKeywords(
-		fromKeywordKey,
-		toKeywordKey,
-	)
-	return `${firstKeywordKey}-${secondKeywordKey}`
-}
 
 export const getNewKeywordGroups = ({
 	relatedCaseId,

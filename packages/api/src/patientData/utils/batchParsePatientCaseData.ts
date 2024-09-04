@@ -3,7 +3,7 @@ import _ from "lodash"
 import pLimit from "p-limit"
 
 import { insertUniqueKeywordWithVector } from "../../keywords/utils/insertWithVector"
-import { upsertRelation } from "../../keywords/utils/upsertRelation"
+import { upsertKeywordRelation } from "../../keywords/utils/upsertKeywordRelation"
 import { batchTokenizePatientNote } from "../../openai/chatFunctions/batchTokenization"
 import { WithServerContext, WithTransactionContext } from "../../trpc"
 import { PatientNoteBatchKeywordTokenization } from "../schemas/patientNoteComponentsSchema"
@@ -120,7 +120,9 @@ export const batchParsePatientCaseData = async ({
 
 				const upsertUniqueKeywordRelationsPromises =
 					newUniqueKeywordRelations.map((relation) =>
-						limit(async () => upsertRelation({ relation, tx })),
+						limit(async () =>
+							upsertKeywordRelation({ relation, tx }),
+						),
 					)
 
 				console.time(`Upserting UniqueKeywordRelations ${batchName}`)

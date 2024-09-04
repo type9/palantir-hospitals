@@ -69,9 +69,6 @@ export const insertWithVector = async <T extends KEYWORD_VECTOR_TABLE>({
 	// Parse the vector field from string back to number[]
 	const parsedResult = {
 		...result[0],
-		vector: result[0]?.vector
-			? parseVector(result[0].vector as unknown as string)
-			: ([] as number[]),
 	} as InsertReturnType<T>
 
 	return parsedResult
