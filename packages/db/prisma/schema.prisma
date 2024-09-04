@@ -47,6 +47,8 @@ model RelatedKeywords {
   @@unique([fromKeywordId, toKeywordId, relationType])  // Ensure that each relation is unique
   @@index([fromKeywordId, toKeywordId, relationType])
   @@index([fromKeywordId, toKeywordId])
+  @@index([fromKeywordId, relationType])
+  @@index([toKeywordId, relationType])
   @@index([relationType])
 }
 
@@ -61,6 +63,7 @@ model RelatedKeywordGroupOccurrences {
   
   @@index([relatedKeywordsId, keywordInstanceGroupId])
   @@unique([relatedKeywordsId, keywordInstanceGroupId])
+  @@index([relatedKeywordsId])
 }
 
 model RelatedKeywordCaseOccurrences {
@@ -74,6 +77,7 @@ model RelatedKeywordCaseOccurrences {
 
   @@index([relatedKeywordsId, parsedPatientCaseId])
   @@unique([relatedKeywordsId, parsedPatientCaseId])
+  @@index([relatedKeywordsId])
 }
 
 model KeywordInstance {
