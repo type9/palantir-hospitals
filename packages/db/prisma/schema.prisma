@@ -23,7 +23,7 @@ model UniqueKeyword {
   id               String            @id @default(cuid())
   semanticName     String
   category         KeywordCategory
-  vector           Unsupported("vector(1536)")? // Embedding vector for the keyword
+  vector           Unsupported("vector(256)")? // Embedding vector for the keyword
   keywordInstances KeywordInstance[] @relation("UniqueKeywordToKeywordInstances") // One-to-many relation to KeywordInstance
   measures         Measure[]         @relation // One-to-many relation to Measure
   relatedFromKeywords  RelatedKeywords[]  @relation("FromRelatedKeywords")
@@ -59,8 +59,8 @@ model RelatedKeywordGroupOccurrences {
   keywordInstanceGroupId String
   keywordInstanceGroup KeywordInstanceGroup  @relation("GroupOccurrencesToInstanceGroup", fields: [keywordInstanceGroupId], references: [id])
   
-  @@unique([relatedKeywordsId, keywordInstanceGroupId])
   @@index([relatedKeywordsId, keywordInstanceGroupId])
+  @@unique([relatedKeywordsId, keywordInstanceGroupId])
 }
 
 model RelatedKeywordCaseOccurrences {
@@ -72,8 +72,8 @@ model RelatedKeywordCaseOccurrences {
   parsedPatientCaseId String
   parsedPatientCase ParsedPatientCase    @relation("CaseOccurrencesToParsedPatientCase", fields: [parsedPatientCaseId], references: [id])
 
-  @@unique([relatedKeywordsId, parsedPatientCaseId])
   @@index([relatedKeywordsId, parsedPatientCaseId])
+  @@unique([relatedKeywordsId, parsedPatientCaseId])
 }
 
 model KeywordInstance {
@@ -84,7 +84,7 @@ model KeywordInstance {
   contextSentence String
   keywordGroupId  String // Foreign key to KeywordInstanceGroup (optional)
   keywordGroup    KeywordInstanceGroup @relation("GroupToKeywordInstances", fields: [keywordGroupId], references: [id]) // many-to-one relation to KeywordInstanceGroup
-  vector          Unsupported("vector(1536)")? // Embedding vector for the word plus context notes
+  vector          Unsupported("vector(256)")? // Embedding vector for the word plus context notes
   note            String?
 
   // Relation to UniqueKeyword
@@ -106,7 +106,7 @@ model Measure {
 
 model KeywordInstanceGroup {
   id               String            @id @default(cuid())
-  vector           Unsupported("vector(1536)")? // Embedding vector for the summaristic embedding of the group
+  vector           Unsupported("vector(256)")? // Embedding vector for the summaristic embedding of the group
   keywordInstances KeywordInstance[] @relation("GroupToKeywordInstances") // Many-to-many relation to KeywordInstance
   parentCaseAsProcedure String? // Reference to the originating patient case as a procedure
   patientContext ParsedPatientCase? @relation("PatientContextToKeywordGroup") // One-to-one relation to ParsedPatientCase
@@ -122,7 +122,7 @@ model ParsedPatientCase {
   patientContextId  String? @unique // Foreign key to KeywordInstanceGroup (optional)
   procedureIds      String[] @unique // Foreign key to KeywordInstanceGroup (optional)
   caseResultId      String? @unique // Foreign key to KeywordInstanceGroup (optional)
-  vector            Unsupported("vector(1536)")? // Embedding vector for the entire case
+  vector            Unsupported("vector(256)")? // Embedding vector for the entire case
 
   // Relations to KeywordInstanceGroup
   patientContext KeywordInstanceGroup? @relation("PatientContextToKeywordGroup", fields: [patientContextId], references: [id])

@@ -46,7 +46,7 @@ export const batchParsePatientCaseData = async ({
 	const tokenizedCases: TokenizedCase[] = (
 		await Promise.all(tokenizedCasePromises)
 	).filter((rowData) => rowData.data !== undefined) as TokenizedCase[]
-	console.timeEnd(`Tokenizied ${attemptedBatchName}`)
+	console.timeEnd(`Tokenized ${attemptedBatchName}`)
 
 	const batchName = `batch_${tokenizedCases.map((row) => row.id).join(",")}`
 	const batchCount = tokenizedCases.length
@@ -134,5 +134,7 @@ export const batchParsePatientCaseData = async ({
 	} finally {
 		await ctx.db.$disconnect()
 	}
-	console.timeEnd(`Total BatchParse ${batchName} (${batchCount} cases)`)
+	console.timeEnd(
+		`Total BatchParse ${batchName} (${batchCount} cases, ${attmptedBatchCount} attempted)`,
+	)
 }
