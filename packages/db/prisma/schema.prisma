@@ -67,6 +67,7 @@ model RelatedKeywordGroupOccurrences {
   @@index([relatedKeywordsId, keywordInstanceGroupId])
   @@unique([relatedKeywordsId, keywordInstanceGroupId])
   @@index([relatedKeywordsId])
+  @@index([keywordInstanceGroupId])
 }
 
 model RelatedKeywordCaseOccurrences {
@@ -81,6 +82,7 @@ model RelatedKeywordCaseOccurrences {
   @@index([relatedKeywordsId, parsedPatientCaseId])
   @@unique([relatedKeywordsId, parsedPatientCaseId])
   @@index([relatedKeywordsId])
+  @@index([parsedPatientCaseId])
 }
 
 model KeywordInstance {
@@ -103,6 +105,7 @@ model KeywordInstance {
   @@index([uniqueKeywordId])
   @@index([measureId])
   @@index([keywordGroupId])
+  @@index([relatedCaseId])
 }
 
 model Measure {
