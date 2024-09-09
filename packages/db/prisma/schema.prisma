@@ -30,7 +30,8 @@ model UniqueKeyword {
   relatedToKeywords RelatedKeywords[]  @relation("ToRelatedKeywords")
 
   @@unique([semanticName, category]) //Semantic anme and category should be unique and indexable
-  @@index([ semanticName, category])
+  @@index([semanticName, category])
+  @@index([category])
 }
 
 model RelatedKeywords {
@@ -47,6 +48,8 @@ model RelatedKeywords {
   @@unique([fromKeywordId, toKeywordId, relationType])  // Ensure that each relation is unique
   @@index([fromKeywordId, toKeywordId, relationType])
   @@index([fromKeywordId, toKeywordId])
+  @@index([fromKeywordId])
+  @@index([toKeywordId])
   @@index([fromKeywordId, relationType])
   @@index([toKeywordId, relationType])
   @@index([relationType])
@@ -96,6 +99,10 @@ model KeywordInstance {
 
   // Relation to Measure
   measure Measure? @relation(fields: [measureId], references: [id])
+  
+  @@index([uniqueKeywordId])
+  @@index([measureId])
+  @@index([keywordGroupId])
 }
 
 model Measure {
