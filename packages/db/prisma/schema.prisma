@@ -19,6 +19,19 @@ datasource db {
   extensions = [vector]
 }
 
+model UniqueKeywordClusterResult {
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  keywordId String  @unique
+  keyword UniqueKeyword @relation("ClusterResultToUniqueKeyword", fields: [keywordId], references: [id])
+  cluster   Int
+  category  KeywordCategory
+  
+  @@index([category, cluster])
+  @@index([cluster])
+  @@index([category])
+  @@index([keywordId])
+}
+
 model UniqueKeyword {
   id               String            @id @default(cuid())
   semanticName     String
@@ -28,7 +41,7 @@ model UniqueKeyword {
   measures         Measure[]         @relation // One-to-many relation to Measure
   relatedFromKeywords  RelatedKeywords[]  @relation("FromRelatedKeywords")
   relatedToKeywords RelatedKeywords[]  @relation("ToRelatedKeywords")
-
+  clusterResult UniqueKeywordClusterResult? @relation("ClusterResultToUniqueKeyword")
   @@unique([semanticName, category]) //Semantic anme and category should be unique and indexable
   @@index([semanticName, category])
   @@index([category])
