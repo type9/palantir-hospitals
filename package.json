@@ -23,7 +23,9 @@
 		"format:staged": "prettier --write $(git diff --staged --name-only --diff-filter d | xargs)",
 		"type-check": "dotenv -- turbo run type-check",
 		"lint": "dotenv -e .env.local -- turbo lint",
-		"start": "dotenv -e .env.local -- turbo run start"
+		"start": "dotenv -e .env.local -- turbo run start",
+		"withvenv": "source apps/analysis/venv/bin/activate",
+		"analysis:clusterKeywords": "pnpm withvenv && python3 apps/analysis/cluster_ukw_hdbscan.py"
 	},
 	"devDependencies": {
 		"@colorchordsapp/eslint-config": "workspace:*",

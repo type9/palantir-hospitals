@@ -1,0 +1,9 @@
+numpy
+pandas
+scipy
+hdbscan
+sqlalchemy
+psycopg2-binary
+python-dotenv  # Correct package for managing .env files
+pynndescent
+scikit-learn
