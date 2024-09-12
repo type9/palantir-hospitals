@@ -4,6 +4,12 @@ SET ivfflat.probes = 10;
 
 DROP TABLE IF EXISTS "TempCaseRelatedKeywords";
 DROP TABLE IF EXISTS "TempCaseDirectlyRelatedKeywords";
+DROP TABLE IF EXISTS "TempKeywordGroups";
+DROP TABLE IF EXISTS "TempSupportA";
+DROP TABLE IF EXISTS "TempSupportB";
+DROP TABLE IF EXISTS "TempSupportAB";
+DROP TABLE IF EXISTS "TempConfidenceLift";
+DROP TABLE IF EXISTS "TempFinalResults";
 
 -- Step 1: Create a Temporary Table for Similar Keywords to 'cough'
 CREATE TEMP TABLE "TempOriginKeywords" AS 
@@ -147,5 +153,85 @@ AND NOT EXISTS (
     END
 );
 
--- Step 5: Print the Number of Rows in the Final Table
-SELECT * FROM "TempCaseRelatedKeywords";
+-- Step 5. Create support tables --
+CREATE TEMP TABLE "TempKeywordGroups" AS
+SELECT 
+    drk."relatedKeywordId",
+    drk."relatedKeywordCluster",
+    drk."relatedKeywordCategory",
+    CASE 
+        WHEN drk."relatedKeywordCluster" = -1 THEN CONCAT(drk."relatedKeywordId", '_', drk."relatedKeywordCategory")
+        ELSE CONCAT(drk."relatedKeywordCluster", '_', drk."relatedKeywordCategory")
+    END AS "keywordGroupId"
+FROM "TempCaseRelatedKeywords" drk;
+
+CREATE TEMP TABLE "TempSupportA" AS
+SELECT
+    drk."similarKeywordId",
+    COUNT(DISTINCT rkc."parsedPatientCaseId") AS "supportA"
+FROM "TempCaseRelatedKeywords" drk
+INNER JOIN "RelatedKeywords" rk 
+    ON rk."fromKeywordId" = drk."similarKeywordId" OR rk."toKeywordId" = drk."similarKeywordId"
+INNER JOIN "RelatedKeywordCaseOccurrences" rkc 
+    ON rkc."relatedKeywordsId" = rk."id"
+GROUP BY drk."similarKeywordId";
+
+CREATE TEMP TABLE "TempSupportB" AS
+SELECT
+    kg."keywordGroupId",
+    COUNT(DISTINCT rkc."parsedPatientCaseId") AS "supportB"
+FROM "TempKeywordGroups" kg
+INNER JOIN "RelatedKeywords" rk 
+    ON rk."fromKeywordId" = kg."relatedKeywordId" OR rk."toKeywordId" = kg."relatedKeywordId"
+INNER JOIN "RelatedKeywordCaseOccurrences" rkc 
+    ON rkc."relatedKeywordsId" = rk."id"
+GROUP BY kg."keywordGroupId";
+
+CREATE TEMP TABLE "TempSupportAB" AS
+SELECT
+    drk."similarKeywordId",
+    kg."keywordGroupId",
+    COUNT(DISTINCT rkc."parsedPatientCaseId") AS "supportAAndB"
+FROM "TempCaseRelatedKeywords" drk
+INNER JOIN "TempKeywordGroups" kg 
+    ON drk."relatedKeywordId" = kg."relatedKeywordId"
+INNER JOIN "RelatedKeywords" rk 
+    ON (rk."fromKeywordId" = drk."similarKeywordId" AND rk."toKeywordId" = kg."relatedKeywordId")
+    OR (rk."toKeywordId" = drk."similarKeywordId" AND rk."fromKeywordId" = kg."relatedKeywordId")
+INNER JOIN "RelatedKeywordCaseOccurrences" rkc 
+    ON rkc."relatedKeywordsId" = rk."id"
+GROUP BY drk."similarKeywordId", kg."keywordGroupId";
+
+
+-- Step 6. AB Rankings ---
+CREATE TEMP TABLE "TempConfidenceLift" AS
+SELECT 
+    ab."similarKeywordId",
+    ab."keywordGroupId",
+    ab."supportAAndB",
+    a."supportA",
+    b."supportB",
+    (ab."supportAAndB"::FLOAT / a."supportA") AS "confidence", -- Confidence = support(A AND B) / support(A)
+    (ab."supportAAndB"::FLOAT / (a."supportA" * b."supportB")) AS "lift" -- Lift = support(A AND B) / (support(A) * support(B))
+FROM "TempSupportAB" ab
+INNER JOIN "TempSupportA" a ON ab."similarKeywordId" = a."similarKeywordId"
+INNER JOIN "TempSupportB" b ON ab."keywordGroupId" = b."keywordGroupId";
+
+CREATE TEMP TABLE "TempFinalResults" AS
+SELECT 
+    cl."similarKeywordId",
+    sk."semanticName" AS "similarKeywordName",
+    cl."keywordGroupId",
+    ARRAY_AGG(DISTINCT rk."semanticName") AS "relatedKeywordNames", -- Aggregate related keyword names for group description
+    cl."supportAAndB",
+    cl."supportA",
+    cl."supportB",
+    cl."confidence",
+    cl."lift"
+FROM "TempConfidenceLift" cl
+INNER JOIN "UniqueKeyword" sk ON cl."similarKeywordId" = sk."id" -- Join to get similar keyword name
+INNER JOIN "TempKeywordGroups" kg ON cl."keywordGroupId" = kg."keywordGroupId"
+INNER JOIN "UniqueKeyword" rk ON kg."relatedKeywordId" = rk."id" -- Join to get related keyword names
+GROUP BY cl."similarKeywordId", sk."semanticName", cl."keywordGroupId", cl."supportAAndB", cl."supportA", cl."supportB", cl."confidence", cl."lift";
+
+SELECT * FROM "TempFinalResults";
