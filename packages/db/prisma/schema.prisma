@@ -30,6 +30,7 @@ model UniqueKeywordClusterResult {
   @@index([cluster])
   @@index([category])
   @@index([keywordId])
+  @@index([keywordId, cluster])
 }
 
 model UniqueKeyword {
@@ -42,6 +43,7 @@ model UniqueKeyword {
   relatedFromKeywords  RelatedKeywords[]  @relation("FromRelatedKeywords")
   relatedToKeywords RelatedKeywords[]  @relation("ToRelatedKeywords")
   clusterResult UniqueKeywordClusterResult? @relation("ClusterResultToUniqueKeyword")
+
   @@unique([semanticName, category]) //Semantic anme and category should be unique and indexable
   @@index([semanticName, category])
   @@index([category])
@@ -66,6 +68,7 @@ model RelatedKeywords {
   @@index([fromKeywordId, relationType])
   @@index([toKeywordId, relationType])
   @@index([relationType])
+  @@index([relationType, fromKeywordId])
 }
 
 model RelatedKeywordGroupOccurrences {

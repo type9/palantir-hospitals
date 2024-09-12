@@ -25,7 +25,8 @@
 		"lint": "dotenv -e .env.local -- turbo lint",
 		"start": "dotenv -e .env.local -- turbo run start",
 		"withvenv": "source apps/analysis/venv/bin/activate",
-		"analysis:clusterKeywords": "pnpm withvenv && python3 apps/analysis/cluster_ukw_hdbscan.py"
+		"analysis:cluster-keywords": "python3 apps/analysis/cluster_ukw_hdbscan.py",
+		"analysis:push-results": "python3 apps/analysis/cluster_pushresults.py"
 	},
 	"devDependencies": {
 		"@colorchordsapp/eslint-config": "workspace:*",
