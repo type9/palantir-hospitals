@@ -23,11 +23,10 @@ export const metadata: Metadata = {
 	],
 	authors: [
 		{
-			name: "shadcn",
-			url: "https://shadcn.com",
+			name: "type9",
 		},
 	],
-	creator: "shadcn",
+	creator: "type9",
 	openGraph: {
 		type: "website",
 		locale: "en_US",
