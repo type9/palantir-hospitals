@@ -6,6 +6,7 @@ import { ThemeProvider } from "next-themes"
 import { siteConfig } from "@/config/site"
 import { fontSans } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
+import { APIProvider } from "@/trpc/APIProvider"
 
 export const metadata: Metadata = {
 	title: {
@@ -80,18 +81,20 @@ export default function RootLayout({ children }: RootLayoutProps) {
 						fontSans.variable,
 					)}
 				>
-					<ThemeProvider
-						attribute="class"
-						defaultTheme="system"
-						enableSystem
-						disableTransitionOnChange
-					>
-						<div vaul-drawer-wrapper="">
-							<div className="bg-background relative flex min-h-screen flex-col">
-								{children}
+					<APIProvider>
+						<ThemeProvider
+							attribute="class"
+							defaultTheme="system"
+							enableSystem
+							disableTransitionOnChange
+						>
+							<div vaul-drawer-wrapper="">
+								<div className="bg-background relative flex min-h-screen flex-col">
+									{children}
+								</div>
 							</div>
-						</div>
-					</ThemeProvider>
+						</ThemeProvider>
+					</APIProvider>
 				</body>
 			</html>
 		</>
