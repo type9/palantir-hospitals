@@ -10,8 +10,8 @@ import { api } from "@/trpc/APIProvider"
 export const RelatedCasesTab: React.FC = ({}) => {
 	const [prompt, setPrompt] = useState<string>("")
 	const { data, isLoading, refetch, error } =
-		api.patientDataRouter.triggerPatientDataParse.useQuery(
-			{ reparseOptions: { limit: 10 } },
+		api.dashboardRouter.caseSearchByPrompt.useQuery(
+			{ prompt, limit: 5 },
 			{ enabled: false, retry: false, refetchOnMount: false },
 		)
 
