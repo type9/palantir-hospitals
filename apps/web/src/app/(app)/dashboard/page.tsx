@@ -49,8 +49,7 @@ export default function DashboardPage() {
 						<TabsList>
 							{tabContent.map((tab) => (
 								<TabsTrigger key={tab.id} value={tab.id}>
-									{tab.id.charAt(0).toUpperCase() +
-										tab.id.slice(1).replace("-", " ")}
+									{tab.title}
 								</TabsTrigger>
 							))}
 						</TabsList>
