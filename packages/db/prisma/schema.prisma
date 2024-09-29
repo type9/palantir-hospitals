@@ -176,6 +176,15 @@ model PatientCaseData {
 
   parsedAt DateTime?
   updatedAt DateTime?
+  shouldParse Boolean @default(false)
+
+  @@index([id])
+  @@index([patientUid])
+  @@index([parsedAt])
+  @@index([updatedAt])
+  @@index([shouldParse])
+  @@index([patientAge])
+  @@index([patientGender])
 }
 
 enum Gender {
