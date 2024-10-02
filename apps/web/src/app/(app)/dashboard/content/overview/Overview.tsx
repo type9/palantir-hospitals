@@ -33,7 +33,7 @@ export const OverviewTab: React.FC = ({}) => {
 						</svg>
 					</CardHeader>
 					<CardContent>
-						<div className="text-2xl font-bold">$45,231.89</div>
+						1<div className="text-2xl font-bold">$45,231.89</div>
 						<p className="text-muted-foreground text-xs">
 							+20.1% from last month
 						</p>
@@ -121,7 +121,7 @@ export const OverviewTab: React.FC = ({}) => {
 			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
 				<Card className="col-span-4">
 					<CardHeader>
-						<CardTitle>Overview</CardTitle>
+						<CardTitle>Symptom Trends</CardTitle>
 					</CardHeader>
 					<CardContent className="pl-2">
 						<Overview />
@@ -129,10 +129,8 @@ export const OverviewTab: React.FC = ({}) => {
 				</Card>
 				<Card className="col-span-3">
 					<CardHeader>
-						<CardTitle>Recent Sales</CardTitle>
-						<CardDescription>
-							You made 265 sales this month.
-						</CardDescription>
+						<CardTitle>Top Reported Symptoms</CardTitle>
+						<CardDescription>Ordered by Confidence</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<RecentSales />

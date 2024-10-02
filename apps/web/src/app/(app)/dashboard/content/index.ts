@@ -5,7 +5,7 @@ export const tabContent: { id: string; title: string; content: React.FC }[] = [
 	{
 		id: "overview",
 		content: OverviewTab,
-		title: "Overview",
+		title: "Symptom Overview",
 	},
 	{
 		id: "related-cases",

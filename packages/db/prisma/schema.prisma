@@ -19,6 +19,29 @@ datasource db {
   extensions = [vector]
 }
 
+model COVID19TrackerSymptomView {
+  keywordGroupBId        String   @id
+  uniqueKeywordIds       String[]
+  uniqueKeywordNames     String[]
+
+  supportAAndBCaseIds    String[]
+  supportAAndBCasesCount Int
+
+  supportACaseIds        String[]
+  supportACasesCount     Int
+
+  supportBCaseIds        String[]
+  supportBCasesCount     Int
+
+  confidence             Float
+  lift                   Float
+
+  @@index([confidence])
+  @@index([lift])
+  @@map("COVID19TrackerSymptomView")
+}
+
+
 model UniqueKeywordClusterResult {
   id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   keywordId String  @unique
