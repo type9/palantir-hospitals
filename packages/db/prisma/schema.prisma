@@ -41,6 +41,28 @@ model COVID19TrackerSymptomView {
   @@map("COVID19TrackerSymptomView")
 }
 
+model COVID19TrackerSimilarDiagnosisView {
+  keywordGroupBId        String   @id
+  uniqueKeywordIds       String[]
+  uniqueKeywordNames     String[]
+
+  supportAAndBCaseIds    String[]
+  supportAAndBCasesCount Int
+
+  supportACaseIds        String[]
+  supportACasesCount     Int
+
+  supportBCaseIds        String[]
+  supportBCasesCount     Int
+
+  confidence             Float
+  lift                   Float
+
+  @@index([confidence])
+  @@index([lift])
+  @@map("COVID19TrackerSimilarDiagnosisView")
+}
+
 
 model UniqueKeywordClusterResult {
   id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid

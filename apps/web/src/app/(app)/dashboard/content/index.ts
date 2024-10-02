@@ -1,3 +1,4 @@
+import { FalsePositivesTab } from "./falsepositives"
 import { OverviewTab } from "./overview"
 import { RelatedCasesTab } from "./relatedcases"
 
@@ -11,5 +12,10 @@ export const tabContent: { id: string; title: string; content: React.FC }[] = [
 		id: "related-cases",
 		title: "Related Cases",
 		content: RelatedCasesTab,
+	},
+	{
+		id: "False Positives",
+		title: "False Positives",
+		content: FalsePositivesTab,
 	},
 ]
