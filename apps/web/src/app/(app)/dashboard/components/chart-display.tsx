@@ -1,3 +1,5 @@
+import { ReactNode } from "react"
+
 import { cn } from "@/lib/utils"
 import { ChartToolbar } from "./chart-toolbar"
 
@@ -5,7 +7,13 @@ export const ChartDisplay = ({
 	name,
 	children,
 	className,
-}: { name: string } & React.ComponentProps<"div">) => {
+	barLeft,
+	barRight,
+}: {
+	name: string
+	barLeft?: ReactNode
+	barRight?: ReactNode
+} & React.ComponentProps<"div">) => {
 	return (
 		<div
 			className={cn(
@@ -16,6 +24,8 @@ export const ChartDisplay = ({
 			<ChartToolbar
 				className="bg-card text-card-foreground relative z-20 flex justify-end border-b px-3 py-2.5"
 				title={name}
+				barLeft={barLeft}
+				barRight={barRight}
 			>
 				{children}
 			</ChartToolbar>

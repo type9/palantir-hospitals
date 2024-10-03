@@ -31,12 +31,10 @@ export const querySymptomsByIllness = async ({
 > => {
 	const finalResults = await ctx.db
 		.$queryRaw<QuerySymptomsByIllnessReturnType>`
-    WITH
-    -- Step 1: Collect Diagnosis Keywords (including clusters)
-    DiagnosisKeywords AS (
+    WITH DiagnosisKeywords AS (
         SELECT uk."id" AS "diagnosisKeywordId"
         FROM "UniqueKeyword" uk
-        WHERE uk."semanticName" IN (${Prisma.join(illnesses, ", ")}) AND uk."category" = 'certainDiagnosis'
+        WHERE uk."semanticName" IN (${Prisma.join(illnesses)}) AND uk."category" = 'certainDiagnosis'
         
         UNION
         
@@ -44,16 +42,16 @@ export const querySymptomsByIllness = async ({
         FROM "UniqueKeyword" uk2
         INNER JOIN "UniqueKeywordClusterResult" ukcr2 ON uk2."id" = ukcr2."keywordId"
         WHERE ukcr2."cluster" IN (
-            SELECT DISTINCT ukcr."cluster"
-            FROM "UniqueKeyword" uk
-            INNER JOIN "UniqueKeywordClusterResult" ukcr ON uk."id" = ukcr."keywordId"
-            WHERE uk."semanticName" IN ('covid-19', 'SARS-CoV-2') AND uk."category" = 'certainDiagnosis'
+        SELECT DISTINCT ukcr."cluster"
+        FROM "UniqueKeyword" uk
+        INNER JOIN "UniqueKeywordClusterResult" ukcr ON uk."id" = ukcr."keywordId"
+        WHERE uk."semanticName" IN (${Prisma.join(illnesses)}) AND uk."category" = 'certainDiagnosis'
         )
         AND uk2."category" = 'certainDiagnosis'
     ),
 
     -- Step 2: Find Symptoms Directly Related to Diagnosis Keywords
-    CaseDirectlyRelatedKeywords AS (
+   CaseDirectlyRelatedKeywords AS (
         SELECT DISTINCT
             rk."id" AS "relationId",
             CASE 
@@ -200,33 +198,36 @@ export const querySymptomsByIllness = async ({
     ),
 
    -- Step 9: Final Results
-SELECT 
-    cl."keywordGroupBId",
-    ARRAY_AGG(DISTINCT kg."symptomKeywordId") AS "uniqueKeywordIds",
-    ARRAY_AGG(DISTINCT rk."semanticName") AS "uniqueKeywordNames",
-    cl."supportAAndBCaseIds",
-    cl."supportAAndBCasesCount",
-    cl."supportACaseIds",
-    cl."supportACasesCount",
-    cl."supportBCaseIds",
-    cl."supportBCasesCount",
-    cl."confidence",
-    cl."lift"
-FROM ConfidenceLift cl
-INNER JOIN KeywordGroups kg ON cl."keywordGroupBId" = kg."keywordGroupId"
-INNER JOIN "UniqueKeyword" rk ON kg."symptomKeywordId" = rk."id"
-GROUP BY 
-    cl."keywordGroupBId",
-    cl."supportAAndBCaseIds",
-    cl."supportAAndBCasesCount",
-    cl."supportACaseIds",
-    cl."supportACasesCount",
-    cl."supportBCaseIds",
-    cl."supportBCasesCount",
-    cl."confidence",
-    cl."lift"
-ORDER BY cl."confidence" DESC, cl."lift" DESC -- Sorting criteria, adjust as needed
-LIMIT ${limit}; -- Adjust number of rows here
+   FinalResults AS (
+    SELECT 
+        cl."keywordGroupBId",
+        ARRAY_AGG(DISTINCT kg."symptomKeywordId") AS "uniqueKeywordIds",
+        ARRAY_AGG(DISTINCT rk."semanticName") AS "uniqueKeywordNames",
+        cl."supportAAndBCaseIds",
+        cl."supportAAndBCasesCount",
+        cl."supportACaseIds",
+        cl."supportACasesCount",
+        cl."supportBCaseIds",
+        cl."supportBCasesCount",
+        cl."confidence",
+        cl."lift"
+    FROM ConfidenceLift cl
+    INNER JOIN KeywordGroups kg ON cl."keywordGroupBId" = kg."keywordGroupId"
+    INNER JOIN "UniqueKeyword" rk ON kg."symptomKeywordId" = rk."id"
+    GROUP BY 
+        cl."keywordGroupBId",
+        cl."supportAAndBCaseIds",
+        cl."supportAAndBCasesCount",
+        cl."supportACaseIds",
+        cl."supportACasesCount",
+        cl."supportBCaseIds",
+        cl."supportBCasesCount",
+        cl."confidence",
+        cl."lift"
+    ORDER BY cl."lift" DESC, cl."confidence" DESC -- Sorting criteria, adjust as needed
+    LIMIT ${limit} -- Adjust number of rows here
+   )
+   SELECT * FROM FinalResults
 `
-	return QuerySymptomsByIllnessReturnSchema.parse(finalResults)
+	return finalResults
 }

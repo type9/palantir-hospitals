@@ -7,7 +7,12 @@ export function RecentSales() {
 	const { data, isLoading, error } =
 		api.dashboardRouter.getSymptomMetrics.useQuery({
 			take: 10,
-			orderBy: { confidence: "desc" },
+			orderBy: [
+				{ lift: "desc" },
+				{ confidence: "desc" },
+				{ supportAAndBCasesCount: "desc" },
+			],
+			where: { supportAAndBCasesCount: { gt: 1 } },
 		})
 
 	return (
