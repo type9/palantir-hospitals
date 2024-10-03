@@ -26,9 +26,9 @@ export const FalsePositivesTab: React.FC = ({}) => {
 			</h1>
 			<p className="text-muted-foreground max-w-2xl text-sm">
 				Diseases below have high overlap with COVID-19. Symptoms are
-				graphed by the 5 most common symptoms that probably identify
-				that illness. If the patient does not exhibit the highest ranked
-				symptoms, it might possible to rule out that illness.
+				graphed by the 5 most common symptoms that most probably
+				identify that disease. If the patient does not exhibit the
+				highest ranked symptoms, it is likely to rule out that disease.
 			</p>
 			<hr></hr>
 			<div className="grid flex-1 scroll-mt-20 items-start gap-12 md:grid-cols-2 md:gap-8 lg:grid-cols-3 xl:gap-12">
