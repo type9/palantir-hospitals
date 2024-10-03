@@ -88,14 +88,14 @@ export const SymptomsChartBarSmall = ({
 							fontSize={10}
 							width={100}
 						/>
-						<XAxis dataKey="confidence" type="number" hide />
+						<XAxis dataKey="lift" type="number" hide />
 						<ChartTooltip
 							cursor={false}
 							content={<ChartTooltipContent hideLabel />}
 						/>
 						<Bar
 							spacing={4}
-							dataKey="confidence"
+							dataKey="lift"
 							layout="vertical"
 							radius={5}
 						/>

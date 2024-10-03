@@ -224,8 +224,9 @@ export const querySymptomsByIllness = async ({
         cl."supportBCasesCount",
         cl."confidence",
         cl."lift"
-    ORDER BY cl."lift" DESC, cl."confidence" DESC -- Sorting criteria, adjust as needed
-    LIMIT ${limit} -- Adjust number of rows here
+    HAVING cl."supportAAndBCasesCount" > 1
+    ORDER BY cl."lift" DESC, cl."confidence" DESC
+    LIMIT ${limit}
    )
    SELECT * FROM FinalResults
 `
