@@ -43,6 +43,9 @@ model COVID19TrackerSymptomView {
 
 model COVID19TrackerSimilarDiagnosisView {
   keywordGroupBId        String   @id
+
+  supportAKeywordIds     String[]
+
   uniqueKeywordIds       String[]
   uniqueKeywordNames     String[]
 

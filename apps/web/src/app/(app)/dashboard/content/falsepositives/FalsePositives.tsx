@@ -1,4 +1,5 @@
 import React from "react"
+import Link from "next/link"
 import _ from "lodash"
 
 import { Button } from "@/components/ui/button"
@@ -16,6 +17,7 @@ export const FalsePositivesTab: React.FC = ({}) => {
 				lift: true,
 				uniqueKeywordNames: true,
 				supportAAndBCaseIds: true,
+				supportAKeywordIds: true,
 			},
 		})
 
@@ -37,7 +39,23 @@ export const FalsePositivesTab: React.FC = ({}) => {
 					<ChartDisplay
 						key={item.uniqueKeywordNames[0]}
 						name={`conf: ${_.truncate(String(item.confidence), { length: 12 })} \n| lift: ${_.truncate(String(item.lift), { length: 12 })}`}
-						barRight={<Button size="sm">View Cases</Button>}
+						barRight={
+							<Link
+								href={{
+									pathname: "/relatedcases",
+									query: {
+										caseParams: JSON.stringify({
+											uniqueKeywordIds:
+												item.supportAKeywordIds,
+											parsedCaseIds:
+												item.supportAAndBCaseIds,
+										}),
+									},
+								}}
+							>
+								<Button size="sm">View Cases</Button>
+							</Link>
+						}
 					>
 						<SymptomsChartBarSmall
 							title={
