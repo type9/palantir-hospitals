@@ -19,6 +19,15 @@ datasource db {
   extensions = [vector]
 }
 
+model COVID19GeneralStatisticsView {
+  calculatedAt DateTime @default(now()) @unique
+  totalParsedCases Int
+  totalUnparsedCases Int
+  totalCOVID19Cases Int
+  totalUniqueSymptomsInCOVID19Cases Int
+  averageAgeCOVID19Cases Int
+}
+
 model COVID19TrackerSymptomView {
   keywordGroupBId        String   @id
   uniqueKeywordIds       String[]

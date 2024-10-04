@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
 import _ from "lodash"
 
@@ -19,9 +20,18 @@ export function RecentSales() {
 		<div className="flex flex-col gap-1 overflow-scroll">
 			{isLoading && <div>Loading...</div>}
 			{data?.map((item) => (
-				<div
+				<Link
 					className="hover:bg-muted/50 hover:text-muted-foreground flex cursor-pointer items-center rounded-sm p-2 transition"
 					key={item.keywordGroupBId}
+					href={{
+						pathname: "/relatedcases",
+						query: {
+							caseParams: JSON.stringify({
+								uniqueKeywordIds: item.uniqueKeywordIds,
+								parsedCaseIds: item.supportAAndBCaseIds,
+							}),
+						},
+					}}
 				>
 					<div>
 						<p className="text-sm font-medium leading-none">
@@ -36,7 +46,7 @@ export function RecentSales() {
 					<div className="font-small ml-auto text-sm">
 						{item.supportAAndBCasesCount} Cases
 					</div>
-				</div>
+				</Link>
 			))}
 		</div>
 	)

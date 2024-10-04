@@ -4,7 +4,6 @@ import React, { useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { CaretSortIcon } from "@radix-ui/react-icons"
 import _ from "lodash"
-import { Link } from "lucide-react"
 import { z } from "zod"
 
 import {
