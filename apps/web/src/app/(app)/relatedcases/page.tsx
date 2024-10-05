@@ -24,17 +24,6 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { api } from "@/trpc/APIProvider"
 import { ChartDisplay } from "../dashboard/components/chart-display"
 
-export const RelatedCasesPagePropsSchema = z.object({
-	uniqueKeywordIds: z.array(z.string()),
-	parsedCaseIds: z.array(z.string()),
-})
-
-export type RelatedCasesPageProps = z.infer<typeof RelatedCasesPagePropsSchema>
-
-export type RelatedCasesPageParams = {
-	query: RelatedCasesPageProps
-}
-
 export default function RelatedCasesPage() {
 	const searchParams = useSearchParams()
 
