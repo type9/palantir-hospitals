@@ -1,5 +1,6 @@
 import "@/styles/globals.css"
 
+import React from "react"
 import { Metadata, Viewport } from "next"
 import { ThemeProvider } from "next-themes"
 
