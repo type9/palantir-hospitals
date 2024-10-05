@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { Suspense, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { CaretSortIcon } from "@radix-ui/react-icons"
 import _ from "lodash"
@@ -19,12 +19,11 @@ import {
 	CollapsibleContent,
 	CollapsibleTrigger,
 } from "@/components/ui/collapsible"
-import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { api } from "@/trpc/APIProvider"
 import { ChartDisplay } from "../dashboard/components/chart-display"
 
-export default function RelatedCasesPage() {
+const RelatedCasePageContent: React.FC = () => {
 	const searchParams = useSearchParams()
 
 	const queryProps = searchParams?.has("caseParams")
@@ -42,7 +41,7 @@ export default function RelatedCasesPage() {
 				refetchOnMount: false,
 			},
 		)
-
+	if (isLoading) return <div>Loading...</div>
 	const cases = _.groupBy(data ?? [], (item) => item.parsedPatientCaseId)
 
 	if (isLoading) return <div>Loading...</div>
@@ -123,5 +122,12 @@ export default function RelatedCasesPage() {
 				))}
 			</div>
 		</div>
+	)
+}
+export default function RelatedCasesPage() {
+	return (
+		<Suspense fallback={<div>Loading...</div>}>
+			{<RelatedCasePageContent />}
+		</Suspense>
 	)
 }
