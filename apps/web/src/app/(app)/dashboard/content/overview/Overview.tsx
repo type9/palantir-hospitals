@@ -43,9 +43,7 @@ export const OverviewTab: React.FC = ({}) => {
 						<div className="text-2xl font-bold">
 							{data?.totalCOVID19Cases}
 						</div>
-						<p className="text-muted-foreground text-xs">
-							Verified Cases
-						</p>
+						<p className="text-muted-foreground text-xs"></p>
 					</CardContent>
 				</Card>
 				<Card>
@@ -104,7 +102,7 @@ export const OverviewTab: React.FC = ({}) => {
 				<Card>
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 						<CardTitle className="text-sm font-medium">
-							Total Parsed Cases
+							Total Analyzed Cases
 						</CardTitle>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -121,10 +119,15 @@ export const OverviewTab: React.FC = ({}) => {
 					</CardHeader>
 					<CardContent>
 						<div className="text-2xl font-bold">
-							{data?.totalParsedCases}
+							{new Intl.NumberFormat("en-US").format(
+								Number(data?.totalParsedCases),
+							)}
 						</div>
 						<p className="text-muted-foreground text-xs">
-							{data?.totalUnparsedCases} Unparsed
+							{new Intl.NumberFormat("en-US").format(
+								Number(data?.totalUnparsedCases),
+							)}{" "}
+							awaiting analysis
 						</p>
 					</CardContent>
 				</Card>
@@ -132,7 +135,7 @@ export const OverviewTab: React.FC = ({}) => {
 			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
 				<Card className="col-span-4">
 					<CardHeader>
-						<CardTitle>{`Symptom Trends [EXAMPLE]`}</CardTitle>
+						<CardTitle>{`Symptoms Composition (Inner: Cases, Outer: Lift)`}</CardTitle>
 					</CardHeader>
 					<CardContent className="pl-2">
 						<Overview />
@@ -141,7 +144,9 @@ export const OverviewTab: React.FC = ({}) => {
 				<Card className="col-span-3">
 					<CardHeader>
 						<CardTitle>Top Reported Symptoms</CardTitle>
-						<CardDescription>Ordered by Confidence</CardDescription>
+						<CardDescription>
+							Ordered by Most Unique to COVID-19
+						</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<RecentSales />

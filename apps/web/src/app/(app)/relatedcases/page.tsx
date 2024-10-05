@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { CaretSortIcon } from "@radix-ui/react-icons"
 import _ from "lodash"
+import stc from "string-to-color"
 import { z } from "zod"
 
 import {
@@ -76,7 +77,31 @@ export default function RelatedCasesPage() {
 											value={item.uniqueKeywordId}
 										>
 											<AccordionTrigger>
-												{item.semanticName}
+												<div className="flex items-center gap-2">
+													<svg
+														xmlns="http://www.w3.org/2000/svg"
+														width="24"
+														height="24"
+														viewBox="0 0 24 24"
+														fill="none"
+														stroke={stc(
+															item.semanticName,
+														)}
+														stroke-width="2.25"
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														className="lucide lucide-square"
+													>
+														<rect
+															width="18"
+															height="18"
+															x="3"
+															y="3"
+															rx="2"
+														/>
+													</svg>
+													{item.semanticName}
+												</div>
 											</AccordionTrigger>
 											<AccordionContent>
 												<div className="flex flex-col gap-2">
