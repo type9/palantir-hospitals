@@ -3,6 +3,7 @@
 import { ReactNode } from "react"
 import _ from "lodash"
 import { Bar, BarChart, XAxis, YAxis } from "recharts"
+import stc from "string-to-color"
 
 import {
 	Card,
@@ -46,7 +47,7 @@ export const SymptomsChartBarSmall = ({
 				symptom: item.uniqueKeywordNames[0],
 				confidence: item.confidence,
 				lift: item.lift,
-				fill: "white",
+				fill: stc(item.uniqueKeywordNames[0]),
 			}))
 		: undefined
 
