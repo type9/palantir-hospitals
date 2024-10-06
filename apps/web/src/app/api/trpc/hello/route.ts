@@ -1,12 +1,11 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from "next"
+import { NextRequest, NextResponse } from "next/server"
 
 type Data = {
-	name: string
+	message: string
 }
 
-const handler = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-	res.status(200).json({ name: "John Doe" })
+const handler = async (req: NextRequest): Promise<NextResponse<Data>> => {
+	return NextResponse.json({ message: "Hello, Next.js!" })
 }
 
 export { handler as GET, handler as POST }
