@@ -2,7 +2,7 @@ import { type NextRequest } from "next/server"
 import { appRouter, createTRPCContext } from "@colorchordsapp/api/trpc"
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch"
 
-export const runtime = "edge"
+export const runtime = "nodejs"
 
 /**
  * Configure basic CORS headers
