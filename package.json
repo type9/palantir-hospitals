@@ -8,7 +8,7 @@
 		"url": "git@github.com:type9/palantir-hospitals.git"
 	},
 	"engines": {
-		"node": ">=20"
+		"node": "18.20.4"
 	},
 	"workspaces": [
 		"packages/*",
